@@ -56,12 +56,30 @@
     <!-- 헤더 -->
     <header class="bg-slate-900/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            
+            <!-- 업데이트 정보 바 (NEW) -->
+            <div class="flex justify-center mb-6">
+                <div class="inline-flex items-center gap-4 bg-slate-800/80 border border-slate-700 rounded-full px-5 py-2 text-xs font-medium shadow-lg backdrop-blur-sm">
+                    <div class="flex items-center gap-1.5 text-slate-400">
+                        <i class="fa-regular fa-calendar-check text-indigo-400"></i>
+                        <span>Last Update:</span>
+                        <span class="text-slate-200 font-bold">2026. 01. 19</span>
+                    </div>
+                    <div class="w-px h-3 bg-slate-700"></div>
+                    <div class="flex items-center gap-1.5 text-slate-400">
+                        <i class="fa-solid fa-layer-group text-pink-400"></i>
+                        <span>New Contents:</span>
+                        <span id="new-count-display" class="text-pink-400 font-bold bg-pink-400/10 px-1.5 py-0.5 rounded">0개</span>
+                    </div>
+                </div>
+            </div>
+
             <div class="flex flex-col md:flex-row justify-between items-center gap-4">
                 <div>
                     <h1 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
                         AI Creator's Insight DB
                     </h1>
-                    <p class="text-slate-400 text-sm mt-1">안주성을 위한 전체 레퍼런스 분석 (총 33개)</p>
+                    <p class="text-slate-400 text-sm mt-1">안주성을 위한 전체 레퍼런스 분석 (총 <span id="total-count">0</span>개)</p>
                 </div>
                 
                 <div class="flex flex-wrap justify-center gap-2">
@@ -107,7 +125,7 @@
             </div>
             <div class="p-6 overflow-y-auto custom-scrollbar flex-grow">
                 
-                <!-- API Key Input Section (NEW) -->
+                <!-- API Key Input Section -->
                 <div class="mb-6 p-4 bg-slate-950/50 rounded-lg border border-indigo-500/30">
                     <label class="block text-xs font-bold text-indigo-400 mb-2 uppercase tracking-wider flex justify-between">
                         <span>Google Gemini API Key</span>
@@ -144,50 +162,63 @@
     <script>
         // 전체 데이터 베이스
         const db = [
-            // 🎨 퀄리티/기술
-            { tag: "quality", label: "🎨 퀄리티/기술", color: "blue", name: "Brad Ziemer", sub: "건물 건축 노가다 긴 영상", why: "건물이 스스로 지어지는 과정을 매끄러운 타임랩스(In-painting)로 보여주어 시각적 쾌감 제공.", apply: "복잡한 기계나 실험 장비가 조립되는 과정을 타임랩스 형식으로 연출.", link: "https://www.instagram.com/reel/DS7o0EIDTqa/" },
-            { tag: "quality", label: "🎨 퀄리티/기술", color: "blue", name: "Rourke Sefton-Minns", sub: "광고용 프롬프트 & 스토리보드", why: "LTX Studio를 활용한 정교한 사전 기획(스토리보드)으로 AI 광고의 퀄리티와 개연성 확보.", apply: "긴 호흡의 영상 제작 시 사전 컷별 기획(프리프로덕션) 도입.", link: "https://www.instagram.com/reel/DTN_mt0E_Xx/" },
-            { tag: "quality", label: "🎨 퀄리티/기술", color: "blue", name: "비주얼프리즘", sub: "Nano Banana 라이팅", why: "'Soft Light', 'Kicker Light' 등 전문 조명 용어를 사용하여 실사 같은 분위기 연출.", apply: "썸네일이나 인트로 제작 시 조명 프롬프트를 적극 활용하여 때깔 높이기.", link: "https://www.instagram.com/p/DSEnYqRibgq/" },
-            { tag: "quality", label: "🎨 퀄리티/기술", color: "blue", name: "Social Cameo", sub: "도심 하늘 헬리콥터 뷰 (여행 AI 아트)", why: "헬리콥터에 매달린 듯한 하이앵글로 압도적인 스케일감 부여.", apply: "거시 경제나 지구과학 설명 시 전지적 시점의 앵글 활용.", link: "https://www.instagram.com/p/DTP6IfXDycO/" },
-            { tag: "quality", label: "🎨 퀄리티/기술", color: "blue", name: "AI Fav Mag", sub: "AI 툴 6가지 추천", why: "목적에 맞는 AI 툴(Nano Banana, Kling 등)의 워크플로우를 명확히 정리.", apply: "제작 파이프라인을 단계별로 매뉴얼화하여 효율성 증대.", link: "https://www.instagram.com/p/DS7ifoakqLg/" },
-            { tag: "quality", label: "🎨 퀄리티/기술", color: "blue", name: "비주얼프리즘 (2)", sub: "Nano Banana 커뮤니티", why: "프롬프트 공유 사이트 및 깃허브 등 실무 리소스 큐레이션.", apply: "팀 내 프롬프트 라이브러리 구축 및 공유.", link: "https://www.instagram.com/p/DTNCK0KCUx2/" },
+            // --- NEW ADDITIONS (새로운 항목) ---
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Hera Kim", sub: "명품 브랜드로 꾸민 세상", why: "샤넬 등 명품 브랜드 컨셉으로 관광 명소나 건물을 재해석하여 시각적 충격 제공.", apply: "특정 브랜드 스타일로 우리 동네나 사무실 꾸미기 콘텐츠.", link: "https://www.instagram.com/reel/DQwriaFiBSc/?utm_source=ig_web_copy_link&igsh=NTc4MTIwNjQ2YQ==", new: true },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "If Only (@ifonly.ai)", sub: "초현실적 패션쇼 & 명소", why: "명품 브랜드와 자연/명소를 결합한 웅장한 런웨이 영상.", apply: "제품이 주인공이 되는 거대한 가상 런웨이 기획.", link: "https://www.instagram.com/reel/DS0DDdRjGcF/?utm_source=ig_web_copy_link&igsh=NTc4MTIwNjQ2YQ==", new: true },
+            { tag: "quality", label: "🎨 퀄리티", color: "blue", name: "Нейросети (@syntx_ai)", sub: "립스틱 모핑 광고", why: "시각효과와 자연스러운 모핑(변환) 기술이 뛰어남.", apply: "제품이 생성되는 과정을 화려한 모핑 효과로 연출.", link: "https://www.instagram.com/reel/DRcYez5iD95/?utm_source=ig_web_copy_link&igsh=NTc4MTIwNjQ2YQ==", new: true },
+            { tag: "quality", label: "🎨 퀄리티", color: "blue", name: "Social Cameo (2)", sub: "실/울 소재 입체 로고", why: "SNS 아이콘을 털실 같은 질감으로 변환하는 프롬프트 능력.", apply: "브랜드 로고를 다양한 질감(음식, 보석 등)으로 표현.", link: "https://www.instagram.com/p/DTfebchD3DH/?utm_source=ig_web_copy_link&igsh=NTc4MTIwNjQ2YQ==", new: true },
+            { tag: "marketing", label: "💰 수익화", color: "green", name: "Nashra Khan (@blushugc)", sub: "감각적인 화장품 핸드 샷", why: "제품을 감각적으로 보여주다가 손에 쥐는 트랜지션 아이디어가 좋음.", apply: "핸드 모델링을 활용한 제품 등장 숏폼.", link: "https://www.instagram.com/reel/DTcZQbskrSj/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==", new: true },
+            { tag: "quality", label: "🎨 퀄리티", color: "blue", name: "Nina (@asecretknowledge_ask)", sub: "얼음에 갇힌 가방 깨기", why: "미모의 모델과 얼음을 깨는 행위, 자연스러운 모션의 일관성.", apply: "제품을 얼음이나 돌 속에 숨겨두고 발굴하는 컨셉.", link: "https://www.instagram.com/reel/DSc5kXZDNC_/?igsh=MWMwZjNtcGlqNncyMQ==", new: true },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Christine", sub: "구두 자동차", why: "명품 구두를 자동차로 변환해서 타는 기발한 상상력.", apply: "판매하는 제품을 거대한 탈것으로 변형시키는 영상.", link: "https://www.instagram.com/reel/DQCo5wKiJ9l/?igsh=ejIyZnlndHk0Zmc1", new: true },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Christine", sub: "버스 런웨이", why: "명품 브랜드 버스로 표현해서 런웨이를 걷는 독특한 연출.", apply: "대중교통이나 일상 사물을 패션 아이템으로 승화.", link: "https://www.instagram.com/reel/DSQUKHPiE88/?igsh=bjNyNHhueTRrcGVw", new: true },
+            { tag: "marketing", label: "💰 수익화", color: "green", name: "이윤수 (@showkingcar)", sub: "디월트 공주 드릴", why: "거친 공구를 '공주풍'으로 커스텀하여 반전 매력 선사 (쇼핑 숏폼 참고).", apply: "남성적인 제품을 여성스럽게, 혹은 그 반대로 리폼하는 콘텐츠.", link: "https://www.instagram.com/reel/DS9baSMEzlT/?igsh=dThvOHJxbzVid2t2", new: true },
+            { tag: "editing", label: "🎬 편집", color: "orange", name: "Bar Ben Haim (@lucia.w0o)", sub: "커피 부으면 실물 변환", why: "스케치 위에 액체를 부으면 실사로 변하는 드라마틱한 트랜지션.", apply: "제품 도안에 물을 부으면 실제 제품이 튀어나오는 연출.", link: "https://www.instagram.com/reel/DRlVtjbEWF_/?igsh=MWV5djhnMWVyd2R0dA==", new: true },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Jesse Richards", sub: "책상 금형 틀 4차원 믹스", why: "일상 공간(책상)에서 벌어지는 기이하고 창의적인 4차원 시각 효과.", apply: "책상 위에서 벌어지는 미니 서커스나 공장 가동 영상.", link: "https://www.instagram.com/reel/DRfk0cYEmjZ/?igsh=aHM4NGZyNDBweTNo", new: true },
+            { tag: "editing", label: "🎬 편집", color: "orange", name: "Shifer", sub: "Real vs AI B급 감성", why: "리얼과 AI를 교차 편집하며 유쾌한 B급 감성으로 풀어냄.", apply: "현실의 초라함과 AI의 화려함을 대조하는 개그 릴스.", link: "https://www.instagram.com/reel/DRAT8e8jexS/?igsh=aWhuM3QzMGozbmEw", new: true },
+            { tag: "quality", label: "🎨 퀄리티", color: "blue", name: "Denise Garbis", sub: "극한의 비주얼", why: "압도적인 고퀄리티 비주얼로 시선을 강탈함.", apply: "단 3초 만에 시선을 뺏는 고해상도 인트로 영상.", link: "https://www.instagram.com/reel/DQ6qfIykazv/?igsh=eWJ6bXgxcW1hNXJk", new: true },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "If Only (2)", sub: "명품 보석 버스", why: "버스를 거대한 명품 보석함처럼 표현한 고퀄리티 영상.", apply: "대중교통을 브랜드의 시그니처 아이템으로 튜닝.", link: "https://www.instagram.com/reel/DR_-SN5jG_i/?igsh=ODM1NW05a3VwZHdj", new: true },
+            { tag: "editing", label: "🎬 편집", color: "orange", name: "Margo", sub: "바비 박스 패션 변환", why: "인형 상자 안에서 의상이 바뀌는 트랜지션.", apply: "제품 패키지 안에서 내용물이 계속 바뀌는 연출.", link: "https://www.instagram.com/reel/DR7DDjAAvRu/?igsh=MTJpeDdyMjl5Y2Vweg==", new: true },
+            { tag: "editing", label: "🎬 편집", color: "orange", name: "Fernando Demarchi", sub: "시대별 패션 변천사", why: "한 인물의 패션이 시대별로 자연스럽게 변하는 모핑 영상.", apply: "제품의 역사나 로고 변천사를 모핑으로 표현.", link: "https://www.instagram.com/reel/DQMXg4ikShg/?igsh=MTQxem9oYmFxb2p6Mw==", new: true },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Harshdeep Arora", sub: "명품 브랜드 비행기", why: "비행기 전체를 명품 패턴으로 래핑한 럭셔리한 상상력.", apply: "거대 운송 수단에 브랜드 아이덴티티를 입히는 가상 옥외광고(FOOH).", link: "https://www.instagram.com/reel/DRUalrMjHFx/?igsh=MXd4bjd0ajZjM2c0Mg==", new: true },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Hera Kim (2)", sub: "판타지 도서관", why: "도서관을 판타지 영화 속 건물처럼 웅장하게 변환.", apply: "평범한 공간을 마법의 성처럼 바꾸는 비포/애프터.", link: "https://www.instagram.com/reel/DQrT7kfibcV/?igsh=MWg1bmlkanI0Y3Z4OQ==", new: true },
+            { tag: "character", label: "🧬 캐릭터", color: "purple", name: "AI Creator", sub: "플라스틱 인형 패션", why: "플라스틱 질감 인형에 트렌디한 옷을 입혀 대리 만족 제공.", apply: "마네킹이나 피규어에 신상 의류를 입히는 가상 피팅.", link: "https://www.instagram.com/reel/DRmYbX3DErA/?igsh=MXE0M2U0bmNuejN2dg==", new: true },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Xiao Bo", sub: "보석 페라리", why: "슈퍼카를 보석 질감으로 렌더링하여 화려함 극대화.", apply: "자동차나 기계 부품을 보석/크리스탈로 표현.", link: "https://www.instagram.com/reel/DQcCrg3Ei0h/?igsh=MjNlMGU3eW45aDk=", new: true },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Supercar AI", sub: "투명 플라스틱 슈퍼카", why: "속이 다 비치는 투명 재질로 슈퍼카를 표현한 신선함.", apply: "제품의 내부 구조를 보여주는 투명 에디션 컨셉 영상.", link: "https://www.instagram.com/reel/DSVQnazAQdR/", new: true },
 
-            // 🤯 후킹/초현실
-            { tag: "surreal", label: "🤯 후킹/초현실", color: "pink", name: "김대범", sub: "라면 캡슐", why: "'만약에?'라는 상상력을 극도로 리얼하게 구현하여 끝까지 보게 함.", apply: "'알약 하나로 배부르다면?' 같은 과학적 상상을 시각화.", link: "https://www.instagram.com/reel/DRsvAHgidv8/" },
-            { tag: "surreal", label: "🤯 후킹/초현실", color: "pink", name: "DIY & Crafts", sub: "아이폰으로 에폭시 바닥시공", why: "고가의 아이폰을 바닥재로 쓴다는 충격적 부조화로 이목 집중.", apply: "고정관념을 깨는 실험 영상 (예: 다이아몬드로 고기 굽기).", link: "https://www.instagram.com/reel/DTWBF8aiAY4/" },
-            { tag: "surreal", label: "🤯 후킹/초현실", color: "pink", name: "VAPORAMA", sub: "게임스테이지 같은 낭떠러지", why: "꿈속 같은 공간(Dreamcore)과 추락할 듯한 긴장감 조성.", apply: "경제 위기나 바이러스 침투 상황을 긴박한 1인칭 시점으로 묘사.", link: "https://www.instagram.com/reel/DSa6kTCjLN9/" },
-            { tag: "surreal", label: "🤯 후킹/초현실", color: "pink", name: "visitbusan.en", sub: "한국 명소를 Ai 레고로 만듦", why: "익숙한 명소를 '레고' 질감으로 변환하여 재미와 신선함 제공.", apply: "경제 시스템을 '장난감 마을'처럼 표현하여 거부감 제거.", link: "https://www.instagram.com/reel/DSb_HWrkZEh/" },
-            { tag: "surreal", label: "🤯 후킹/초현실", color: "pink", name: "FT Mobile", sub: "엄청 긴 아이폰 소개", why: "제품의 특징(길이)을 비현실적으로 과장하여 주목도 상승.", apply: "경제 그래프나 수치를 과장된 오브제로 표현.", link: "https://www.instagram.com/reel/DPdyQXJkmey/" },
-            { tag: "surreal", label: "🤯 후킹/초현실", color: "pink", name: "ZUNGZZY", sub: "타이타닉 AI 영화 (크로스오버)", why: "타이타닉x도깨비 등 서로 다른 세계관을 믹스매치하여 호기심 자극.", apply: "역사 속 경제 인물들이 현대에 만나는 상황 연출.", link: "https://www.instagram.com/reel/DTHqmn7E4mj/" },
-            { tag: "surreal", label: "🤯 후킹/초현실", color: "pink", name: "Khizer Shakeel", sub: "타이타닉 What If", why: "'잭이 살았다면?' 같은 강력한 가정법 스토리텔링.", apply: "'IMF가 없었다면?' 같은 대체 역사 콘텐츠.", link: "https://www.instagram.com/reel/DS3JZhiiPRm/" },
-
-            // 💰 마케팅/수익화
-            { tag: "marketing", label: "💰 마케팅/수익화", color: "green", name: "Yuzhi KYD Ni", sub: "리뷰 쇼핑릴스 제일 유명", why: "설명보다 시각적 비포/애프터와 빠른 컷 편집으로 구매 유도.", apply: "가습기 PPL 시 압도적인 시각 효과 위주 편집.", link: "https://www.instagram.com/kydyuzhini/" },
-            { tag: "marketing", label: "💰 마케팅/수익화", color: "green", name: "제 얼굴이 최곤데요", sub: "환타 PPL (Orange 인간)", why: "제품을 캐릭터화(의인화)하여 광고 거부감을 줄임.", apply: "경제 용어(금리, 인플레)를 캐릭터화하여 스토리텔링.", link: "https://www.instagram.com/reel/DS9zRX5E7PW/" },
-            { tag: "marketing", label: "💰 마케팅/수익화", color: "green", name: "Gautam_Ai", sub: "동남아 캡슐 음식 영상", why: "가상의 캡슐 제품을 리얼하게 보여주어 반응 및 PPL 유도.", apply: "미래 기술이나 상상 속의 상품을 PPL처럼 연출.", link: "https://www.instagram.com/reel/DTKi5IUkX-z/" },
-            { tag: "marketing", label: "💰 마케팅/수익화", color: "green", name: "버닝커브", sub: "콘텐츠 아이디어 50개", why: "감에 의존하지 않고 한 달 치 콘텐츠를 미리 구조화함.", apply: "주간 업로드 스케줄링 및 템플릿 제작.", link: "https://www.instagram.com/p/DTPm1GKkhjf/" },
-            { tag: "marketing", label: "💰 마케팅/수익화", color: "green", name: "Penerbit Adab", sub: "고스트라이터 (대필)", why: "고객의 숨겨진 니즈(책 쓰고 싶지만 시간 없음)를 정확히 공략.", apply: "지식 콘텐츠의 니즈 파악 및 서비스화.", link: "https://www.instagram.com/reel/DRixqY6EtPw/" },
-            { tag: "marketing", label: "💰 마케팅/수익화", color: "green", name: "create_daniel2", sub: "AI 100가지 도구 (공책)", why: "디지털 정보를 아날로그(공책, 싸인펜) 감성으로 풀어내어 주목.", apply: "복잡한 과학 원리를 손글씨 노트 필기 컨셉으로 설명.", link: "https://www.instagram.com/p/DTAhYoPjtpW/" },
-            { tag: "marketing", label: "💰 마케팅/수익화", color: "green", name: "문단열", sub: "재미 요소 9가지", why: "재미 요소를 '희소성', '불일치' 등으로 구조화하여 AI에게 정확히 지시.", apply: "대본 프롬프트 작성 시 기획 키워드 포함시키기.", link: "https://www.instagram.com/p/DSpEMnLEwy1/" },
-
-            // 🎬 연출/편집
-            { tag: "editing", label: "🎬 연출/편집", color: "orange", name: "SIA", sub: "POV 샷 프롬프트", why: "빠른 속도감의 POV(시점) 샷으로 지루할 틈을 주지 않음.", apply: "정보 전달 사이 브릿지 영상으로 속도감 부여.", link: "https://www.instagram.com/p/DSzsGjhkzsO/" },
-            { tag: "editing", label: "🎬 연출/편집", color: "orange", name: "Bayashi", sub: "스낵 반복시청", why: "ASMR과 빠른 화면 전환으로 청각적 쾌감 및 무한 루프 유도.", apply: "실험/요리 과정에서 SFX를 과장되게 사용.", link: "https://www.instagram.com/reel/DTSAscYEiMl/" },
-            { tag: "editing", label: "🎬 연출/편집", color: "orange", name: "Adam Rose", sub: "남의 컨텐츠 따라하며 재창조", why: "유행하는 밈을 빠르게 캐치하여 재창조(알고리즘 탑승).", apply: "캐릭터가 유행 밈을 따라하는 숏폼 제작.", link: "https://www.instagram.com/realadamrose/" },
-            { tag: "editing", label: "🎬 연출/편집", color: "orange", name: "Kris Theorin", sub: "VFX 쇼츠 전문", why: "화려한 시각 효과(VFX)로 초반 이탈을 막고 몰입도 유지.", apply: "복잡한 설명 대신 시각적 이펙트로 승부.", link: "https://www.instagram.com/kristheorin/" },
-            { tag: "editing", label: "🎬 연출/편집", color: "orange", name: "Noey Twintail", sub: "옷입고 목욕하는 미친 컨셉", why: "'옷 입고 목욕' 같은 엉뚱한 컨셉 유지로 코어 팬덤 형성.", apply: "괴짜 박사 캐릭터의 독특한 행동 패턴 연구.", link: "https://www.instagram.com/noey_twintail/" },
-
-            // 🧬 캐릭터/세계관
-            { tag: "character", label: "🧬 캐릭터/세계관", color: "purple", name: "ai_glow__", sub: "큰 안경에 비친 풍경", why: "안경 반사 샷 등 확실한 비주얼 아이덴티티.", apply: "똘똘이 캐릭터의 시그니처 아이템(안경 등) 설정.", link: "https://www.instagram.com/p/DTPadtDjBhu/" },
-            { tag: "character", label: "🧬 캐릭터/세계관", color: "purple", name: "ai_glow__ (2)", sub: "헝겊인형 캐릭터 패션", why: "독특한 비율의 캐릭터로 시각적 차별화.", apply: "캐릭터 디자인 시 비율을 과장하여 개성 부여.", link: "https://www.instagram.com/p/DSzLt-ojT6s/" },
-            { tag: "character", label: "🧬 캐릭터/세계관", color: "purple", name: "Ailure 아일루어", sub: "바비 크리스마스 에디션", why: "실존 인물을 인형 컨셉으로 변환하여 친숙함+새로움 전달.", apply: "유명 경제인을 캐릭터화하여 설명.", link: "https://www.instagram.com/reel/DR9WlhuARh3/" },
-            { tag: "character", label: "🧬 캐릭터/세계관", color: "purple", name: "Любовь", sub: "웨이브머리 3D 캐릭", why: "고퀄리티 3D 헤어 텍스처와 움직임으로 시각적 만족감 제공.", apply: "3D 캐릭터 디자인 시 헤어 텍스처 벤치마킹.", link: "https://www.instagram.com/reel/DQvkhShjBA8/" },
-            { tag: "character", label: "🧬 캐릭터/세계관", color: "purple", name: "Lan Anh", sub: "베트남 가슴큰 여자 (시선집중)", why: "즉각적으로 시선을 사로잡는 인물 비주얼 활용.", apply: "썸네일에 시선이 가는 캐릭터 배치 전략.", link: "https://www.instagram.com/lanh_1403_/" },
-
-            // 🎯 타겟/니치
-            { tag: "niche", label: "🎯 타겟/니치", color: "teal", name: "Animated Health", sub: "아이 위생 교육", why: "보이지 않는 세균/반응을 3D 애니메이션으로 시각화하여 교육.", apply: "키즈 과학 채널의 메인 벤치마킹 모델.", link: "https://www.instagram.com/reel/DTS7VA6EQee/" },
-            { tag: "niche", label: "🎯 타겟/니치", color: "teal", name: "LIL DOGE", sub: "릴도지 (타겟팅)", why: "특정 타겟층의 성향을 명확히 공략하여 반응 유도.", apply: "채널의 타겟 오디언스 및 페르소나 명확히 설정.", link: "https://www.instagram.com/lildoge_mars/" },
-            { tag: "niche", label: "🎯 타겟/니치", color: "teal", name: "fasmria", sub: "삽겹살 계단 ASMR", why: "힐링/멍 때리기 좋은 비주얼 ASMR.", apply: "복잡한 설명 후 쉬어가는 타임 영상.", link: "https://www.instagram.com/reel/DSaSJxdjl3H/" }
+            // --- EXISTING ITEMS (기존 항목) ---
+            { tag: "quality", label: "🎨 퀄리티", color: "blue", name: "Brad Ziemer", sub: "건물 건축 노가다 긴 영상", why: "건물이 스스로 지어지는 과정을 매끄러운 타임랩스(In-painting)로 보여주어 시각적 쾌감 제공.", apply: "복잡한 기계나 실험 장비가 조립되는 과정을 타임랩스 형식으로 연출.", link: "https://www.instagram.com/reel/DS7o0EIDTqa/" },
+            { tag: "quality", label: "🎨 퀄리티", color: "blue", name: "Rourke Sefton-Minns", sub: "광고용 프롬프트 & 스토리보드", why: "LTX Studio를 활용한 정교한 사전 기획(스토리보드)으로 AI 광고의 퀄리티와 개연성 확보.", apply: "긴 호흡의 영상 제작 시 사전 컷별 기획(프리프로덕션) 도입.", link: "https://www.instagram.com/reel/DTN_mt0E_Xx/" },
+            { tag: "quality", label: "🎨 퀄리티", color: "blue", name: "비주얼프리즘", sub: "Nano Banana 라이팅", why: "'Soft Light', 'Kicker Light' 등 전문 조명 용어를 사용하여 실사 같은 분위기 연출.", apply: "썸네일이나 인트로 제작 시 조명 프롬프트를 적극 활용하여 때깔 높이기.", link: "https://www.instagram.com/p/DSEnYqRibgq/" },
+            { tag: "quality", label: "🎨 퀄리티", color: "blue", name: "Social Cameo", sub: "도심 하늘 헬리콥터 뷰 (여행 AI 아트)", why: "헬리콥터에 매달린 듯한 하이앵글로 압도적인 스케일감 부여.", apply: "거시 경제나 지구과학 설명 시 전지적 시점의 앵글 활용.", link: "https://www.instagram.com/p/DTP6IfXDycO/" },
+            { tag: "quality", label: "🎨 퀄리티", color: "blue", name: "AI Fav Mag", sub: "AI 툴 6가지 추천", why: "목적에 맞는 AI 툴(Nano Banana, Kling 등)의 워크플로우를 명확히 정리.", apply: "제작 파이프라인을 단계별로 매뉴얼화하여 효율성 증대.", link: "https://www.instagram.com/p/DS7ifoakqLg/" },
+            { tag: "quality", label: "🎨 퀄리티", color: "blue", name: "비주얼프리즘 (2)", sub: "Nano Banana 커뮤니티", why: "프롬프트 공유 사이트 및 깃허브 등 실무 리소스 큐레이션.", apply: "팀 내 프롬프트 라이브러리 구축 및 공유.", link: "https://www.instagram.com/p/DTNCK0KCUx2/" },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "김대범", sub: "라면 캡슐", why: "'만약에?'라는 상상력을 극도로 리얼하게 구현하여 끝까지 보게 함.", apply: "'알약 하나로 배부르다면?' 같은 과학적 상상을 시각화.", link: "https://www.instagram.com/reel/DRsvAHgidv8/" },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "DIY & Crafts", sub: "아이폰으로 에폭시 바닥시공", why: "고가의 아이폰을 바닥재로 쓴다는 충격적 부조화로 이목 집중.", apply: "고정관념을 깨는 실험 영상 (예: 다이아몬드로 고기 굽기).", link: "https://www.instagram.com/reel/DTWBF8aiAY4/" },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "VAPORAMA", sub: "게임스테이지 같은 낭떠러지", why: "꿈속 같은 공간(Dreamcore)과 추락할 듯한 긴장감 조성.", apply: "경제 위기나 바이러스 침투 상황을 긴박한 1인칭 시점으로 묘사.", link: "https://www.instagram.com/reel/DSa6kTCjLN9/" },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "visitbusan.en", sub: "한국 명소를 Ai 레고로 만듦", why: "익숙한 명소를 '레고' 질감으로 변환하여 재미와 신선함 제공.", apply: "경제 시스템을 '장난감 마을'처럼 표현하여 거부감 제거.", link: "https://www.instagram.com/reel/DSb_HWrkZEh/" },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "FT Mobile", sub: "엄청 긴 아이폰 소개", why: "제품의 특징(길이)을 비현실적으로 과장하여 주목도 상승.", apply: "경제 그래프나 수치를 과장된 오브제로 표현.", link: "https://www.instagram.com/reel/DPdyQXJkmey/" },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "ZUNGZZY", sub: "타이타닉 AI 영화 (크로스오버)", why: "타이타닉x도깨비 등 서로 다른 세계관을 믹스매치하여 호기심 자극.", apply: "역사 속 경제 인물들이 현대에 만나는 상황 연출.", link: "https://www.instagram.com/reel/DTHqmn7E4mj/" },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Khizer Shakeel", sub: "타이타닉 What If", why: "'잭이 살았다면?' 같은 강력한 가정법 스토리텔링.", apply: "'IMF가 없었다면?' 같은 대체 역사 콘텐츠.", link: "https://www.instagram.com/reel/DS3JZhiiPRm/" },
+            { tag: "marketing", label: "💰 수익화", color: "green", name: "Yuzhi KYD Ni", sub: "리뷰 쇼핑릴스 제일 유명", why: "설명보다 시각적 비포/애프터와 빠른 컷 편집으로 구매 유도.", apply: "가습기 PPL 시 압도적인 시각 효과 위주 편집.", link: "https://www.instagram.com/kydyuzhini/" },
+            { tag: "marketing", label: "💰 수익화", color: "green", name: "제 얼굴이 최곤데요", sub: "환타 PPL (Orange 인간)", why: "제품을 캐릭터화(의인화)하여 광고 거부감을 줄임.", apply: "경제 용어(금리, 인플레)를 캐릭터화하여 스토리텔링.", link: "https://www.instagram.com/reel/DS9zRX5E7PW/" },
+            { tag: "marketing", label: "💰 수익화", color: "green", name: "Gautam_Ai", sub: "동남아 캡슐 음식 영상", why: "가상의 캡슐 제품을 리얼하게 보여주어 반응 및 PPL 유도.", apply: "미래 기술이나 상상 속의 상품을 PPL처럼 연출.", link: "https://www.instagram.com/reel/DTKi5IUkX-z/" },
+            { tag: "marketing", label: "💰 수익화", color: "green", name: "버닝커브", sub: "콘텐츠 아이디어 50개", why: "감에 의존하지 않고 한 달 치 콘텐츠를 미리 구조화함.", apply: "주간 업로드 스케줄링 및 템플릿 제작.", link: "https://www.instagram.com/p/DTPm1GKkhjf/" },
+            { tag: "marketing", label: "💰 수익화", color: "green", name: "Penerbit Adab", sub: "고스트라이터 (대필)", why: "고객의 숨겨진 니즈(책 쓰고 싶지만 시간 없음)를 정확히 공략.", apply: "지식 콘텐츠의 니즈 파악 및 서비스화.", link: "https://www.instagram.com/reel/DRixqY6EtPw/" },
+            { tag: "marketing", label: "💰 수익화", color: "green", name: "create_daniel2", sub: "AI 100가지 도구 (공책)", why: "디지털 정보를 아날로그(공책, 싸인펜) 감성으로 풀어내어 주목.", apply: "복잡한 과학 원리를 손글씨 노트 필기 컨셉으로 설명.", link: "https://www.instagram.com/p/DTAhYoPjtpW/" },
+            { tag: "marketing", label: "💰 수익화", color: "green", name: "문단열", sub: "재미 요소 9가지", why: "재미 요소를 '희소성', '불일치' 등으로 구조화하여 AI에게 정확히 지시.", apply: "대본 프롬프트 작성 시 기획 키워드 포함시키기.", link: "https://www.instagram.com/p/DSpEMnLEwy1/" },
+            { tag: "editing", label: "🎬 편집", color: "orange", name: "SIA", sub: "POV 샷 프롬프트", why: "빠른 속도감의 POV(시점) 샷으로 지루할 틈을 주지 않음.", apply: "정보 전달 사이 브릿지 영상으로 속도감 부여.", link: "https://www.instagram.com/p/DSzsGjhkzsO/" },
+            { tag: "editing", label: "🎬 편집", color: "orange", name: "Bayashi", sub: "스낵 반복시청", why: "ASMR과 빠른 화면 전환으로 청각적 쾌감 및 무한 루프 유도.", apply: "실험/요리 과정에서 SFX를 과장되게 사용.", link: "https://www.instagram.com/reel/DTSAscYEiMl/" },
+            { tag: "editing", label: "🎬 편집", color: "orange", name: "Adam Rose", sub: "남의 컨텐츠 따라하며 재창조", why: "유행하는 밈을 빠르게 캐치하여 재창조(알고리즘 탑승).", apply: "캐릭터가 유행 밈을 따라하는 숏폼 제작.", link: "https://www.instagram.com/realadamrose/" },
+            { tag: "editing", label: "🎬 편집", color: "orange", name: "Kris Theorin", sub: "VFX 쇼츠 전문", why: "화려한 시각 효과(VFX)로 초반 이탈을 막고 몰입도 유지.", apply: "복잡한 설명 대신 시각적 이펙트로 승부.", link: "https://www.instagram.com/kristheorin/" },
+            { tag: "editing", label: "🎬 편집", color: "orange", name: "Noey Twintail", sub: "옷입고 목욕하는 미친 컨셉", why: "'옷 입고 목욕' 같은 엉뚱한 컨셉 유지로 코어 팬덤 형성.", apply: "괴짜 박사 캐릭터의 독특한 행동 패턴 연구.", link: "https://www.instagram.com/noey_twintail/" },
+            { tag: "character", label: "🧬 캐릭터", color: "purple", name: "ai_glow__", sub: "큰 안경에 비친 풍경", why: "안경 반사 샷 등 확실한 비주얼 아이덴티티.", apply: "똘똘이 캐릭터의 시그니처 아이템(안경 등) 설정.", link: "https://www.instagram.com/p/DTPadtDjBhu/" },
+            { tag: "character", label: "🧬 캐릭터", color: "purple", name: "ai_glow__ (2)", sub: "헝겊인형 캐릭터 패션", why: "독특한 비율의 캐릭터로 시각적 차별화.", apply: "캐릭터 디자인 시 비율을 과장하여 개성 부여.", link: "https://www.instagram.com/p/DSzLt-ojT6s/" },
+            { tag: "character", label: "🧬 캐릭터", color: "purple", name: "Ailure 아일루어", sub: "바비 크리스마스 에디션", why: "실존 인물을 인형 컨셉으로 변환하여 친숙함+새로움 전달.", apply: "유명 경제인을 캐릭터화하여 설명.", link: "https://www.instagram.com/reel/DR9WlhuARh3/" },
+            { tag: "character", label: "🧬 캐릭터", color: "purple", name: "Любовь", sub: "웨이브머리 3D 캐릭", why: "고퀄리티 3D 헤어 텍스처와 움직임으로 시각적 만족감 제공.", apply: "3D 캐릭터 디자인 시 헤어 텍스처 벤치마킹.", link: "https://www.instagram.com/reel/DQvkhShjBA8/" },
+            { tag: "character", label: "🧬 캐릭터", color: "purple", name: "Lan Anh", sub: "베트남 가슴큰 여자 (시선집중)", why: "즉각적으로 시선을 사로잡는 인물 비주얼 활용.", apply: "썸네일에 시선이 가는 캐릭터 배치 전략.", link: "https://www.instagram.com/lanh_1403_/" },
+            { tag: "niche", label: "🎯 니치", color: "teal", name: "Animated Health", sub: "아이 위생 교육", why: "보이지 않는 세균/반응을 3D 애니메이션으로 시각화하여 교육.", apply: "키즈 과학 채널의 메인 벤치마킹 모델.", link: "https://www.instagram.com/reel/DTS7VA6EQee/" },
+            { tag: "niche", label: "🎯 니치", color: "teal", name: "LIL DOGE", sub: "릴도지 (타겟팅)", why: "특정 타겟층의 성향을 명확히 공략하여 반응 유도.", apply: "채널의 타겟 오디언스 및 페르소나 명확히 설정.", link: "https://www.instagram.com/lildoge_mars/" },
+            { tag: "niche", label: "🎯 니치", color: "teal", name: "fasmria", sub: "삽겹살 계단 ASMR", why: "힐링/멍 때리기 좋은 비주얼 ASMR.", apply: "복잡한 설명 후 쉬어가는 타임 영상.", link: "https://www.instagram.com/reel/DSaSJxdjl3H/" }
         ];
 
         // 렌더링 함수
@@ -195,37 +226,44 @@
             const grid = document.getElementById('card-grid');
             grid.innerHTML = '';
             
+            // 새 콘텐츠 개수 카운트
+            let newCount = 0;
+
             db.forEach((item, index) => {
+                // 필터링 적용
                 if (filter !== 'all' && item.tag !== filter) return;
+
+                // 새 콘텐츠 카운트 증가
+                if (item.new) newCount++;
 
                 const isSearch = item.link.includes('google.com'); 
                 const btnText = isSearch ? '🔍 채널 검색' : 'Instagram 보기';
                 const btnIcon = isSearch ? '<i class="fa-brands fa-google mr-1"></i>' : '<i class="fa-brands fa-instagram mr-1"></i>';
                 const btnClass = isSearch ? 'bg-slate-700 hover:bg-slate-600 text-slate-300' : 'bg-pink-600 hover:bg-pink-500 text-white';
 
+                const newBadge = item.new ? `<span class="absolute top-4 right-4 bg-red-500/20 text-red-400 text-[10px] font-bold px-2 py-1 rounded border border-red-500/30 animate-pulse">NEW ✨</span>` : '';
+
                 const cardHTML = `
-                <div class="card ${item.tag} bg-slate-800 rounded-xl overflow-hidden border border-slate-700 card-hover flex flex-col h-full fade-in">
-                    <!-- 상단 컨텐츠 영역 (flex-grow로 남은 공간 차지) -->
+                <div class="card ${item.tag} bg-slate-800 rounded-xl overflow-hidden border border-slate-700 card-hover flex flex-col h-full fade-in relative">
+                    ${newBadge}
                     <div class="p-6 flex-grow">
-                        <div class="flex justify-between items-start mb-4">
+                        <div class="flex justify-between items-start mb-4 pr-12">
                             <span class="px-2 py-1 bg-${item.color}-500/10 text-${item.color}-400 rounded-md text-xs font-bold uppercase border border-${item.color}-500/20">${item.label}</span>
                             ${item.link.includes('instagram.com') ? '<i class="fa-brands fa-instagram text-pink-500 text-xl"></i>' : '<i class="fa-solid fa-magnifying-glass text-slate-500 text-xl"></i>'}
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-1">${item.name}</h3>
-                        <p class="text-slate-400 text-xs mb-4 line-clamp-2">${item.sub}</p>
+                        <h3 class="text-xl font-bold text-white mb-1 truncate">${item.name}</h3>
+                        <p class="text-slate-400 text-xs mb-4 line-clamp-2 h-8">${item.sub}</p>
                         <div class="space-y-4">
                             <div class="bg-slate-900/50 p-3 rounded-lg border border-slate-700/50">
                                 <div class="text-yellow-500 text-xs font-bold mb-1"><i class="fa-regular fa-lightbulb"></i> Why it works</div>
-                                <p class="text-sm text-slate-300" id="analysis-${index}">${item.why}</p>
+                                <p class="text-sm text-slate-300 line-clamp-3" id="analysis-${index}">${item.why}</p>
                             </div>
                             <div class="bg-emerald-900/20 p-3 rounded-lg border border-emerald-500/20">
                                 <div class="text-emerald-400 text-xs font-bold mb-1"><i class="fa-solid fa-rocket"></i> Apply</div>
-                                <p class="text-sm text-emerald-100/80" id="action-${index}">${item.apply}</p>
+                                <p class="text-sm text-emerald-100/80 line-clamp-3" id="action-${index}">${item.apply}</p>
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- 하단 버튼 그룹 (항상 바닥에 고정, 동일한 간격 유지) -->
                     <div class="p-4 border-t border-slate-700 bg-slate-800/50 flex flex-col gap-2">
                         <button onclick="openAiModal('${item.name}', 'analysis-${index}', 'action-${index}')" class="w-full py-2 rounded-lg bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white text-sm font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-indigo-500/20">
                             <i class="fa-solid fa-wand-magic-sparkles"></i> ✨ AI 아이디어 확장
@@ -237,6 +275,15 @@
                 </div>`;
                 grid.innerHTML += cardHTML;
             });
+            
+            // 상단 카운터 업데이트
+            document.getElementById('total-count').innerText = db.length;
+            
+            // 필터링 상태일 때는 '필터된 개수 중 New 개수'를 보여줄 수도 있지만, 
+            // 여기서는 '전체 DB 중 오늘 추가된 총 개수'를 고정적으로 보여주는 것이 더 의미있을 것 같아 고정값으로 계산합니다.
+            // (filter 루프 밖에서 전체 DB 기준으로 다시 계산)
+            const totalNewCount = db.filter(item => item.new).length;
+            document.getElementById('new-count-display').innerText = `${totalNewCount}개`;
         }
 
         // 초기 렌더링
