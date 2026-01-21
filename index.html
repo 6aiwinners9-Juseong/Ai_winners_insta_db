@@ -57,13 +57,13 @@
     <header class="bg-slate-900/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             
-            <!-- 업데이트 정보 바 (NEW) -->
+            <!-- 업데이트 정보 바 -->
             <div class="flex justify-center mb-6">
                 <div class="inline-flex items-center gap-4 bg-slate-800/80 border border-slate-700 rounded-full px-5 py-2 text-xs font-medium shadow-lg backdrop-blur-sm">
                     <div class="flex items-center gap-1.5 text-slate-400">
                         <i class="fa-regular fa-calendar-check text-indigo-400"></i>
                         <span>Last Update:</span>
-                        <span class="text-slate-200 font-bold">2026. 01. 19</span>
+                        <span id="update-date" class="text-slate-200 font-bold"></span>
                     </div>
                     <div class="w-px h-3 bg-slate-700"></div>
                     <div class="flex items-center gap-1.5 text-slate-400">
@@ -125,13 +125,9 @@
             </div>
             <div class="p-6 overflow-y-auto custom-scrollbar flex-grow">
                 
-                <!-- API Key Input Section -->
-                <div class="mb-6 p-4 bg-slate-950/50 rounded-lg border border-indigo-500/30">
-                    <label class="block text-xs font-bold text-indigo-400 mb-2 uppercase tracking-wider flex justify-between">
-                        <span>Google Gemini API Key</span>
-                        <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-slate-500 hover:text-indigo-300 underline cursor-pointer">키 발급받기 ↗</a>
-                    </label>
-                    <input type="password" id="api-key-input" placeholder="AI Studio에서 발급받은 API Key를 입력하세요 (자동 저장됨)" class="w-full bg-slate-900 border border-slate-700 rounded-md py-2 px-3 text-white text-sm focus:outline-none focus:border-indigo-500 transition-colors">
+                <!-- API Key Section (Conditional) -->
+                <div id="api-key-section" class="mb-6 p-4 bg-slate-950/50 rounded-lg border border-indigo-500/30 transition-all">
+                    <!-- JS will inject content here -->
                 </div>
 
                 <div class="mb-6 space-y-4">
@@ -160,32 +156,46 @@
     </div>
 
     <script>
+        // =================================================================
+        // [호스트 설정] 배포 시 아래 따옴표 안에 API Key를 입력하세요.
+        const HOST_API_KEY = ""; 
+        // =================================================================
+
+        const LAST_UPDATE_DATE = "2026. 01. 21"; // 오늘 날짜로 업데이트
+
         // 전체 데이터 베이스
         const db = [
-            // --- NEW ADDITIONS (새로운 항목) ---
-            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Hera Kim", sub: "명품 브랜드로 꾸민 세상", why: "샤넬 등 명품 브랜드 컨셉으로 관광 명소나 건물을 재해석하여 시각적 충격 제공.", apply: "특정 브랜드 스타일로 우리 동네나 사무실 꾸미기 콘텐츠.", link: "https://www.instagram.com/reel/DQwriaFiBSc/?utm_source=ig_web_copy_link&igsh=NTc4MTIwNjQ2YQ==", new: true },
-            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "If Only (@ifonly.ai)", sub: "초현실적 패션쇼 & 명소", why: "명품 브랜드와 자연/명소를 결합한 웅장한 런웨이 영상.", apply: "제품이 주인공이 되는 거대한 가상 런웨이 기획.", link: "https://www.instagram.com/reel/DS0DDdRjGcF/?utm_source=ig_web_copy_link&igsh=NTc4MTIwNjQ2YQ==", new: true },
-            { tag: "quality", label: "🎨 퀄리티", color: "blue", name: "Нейросети (@syntx_ai)", sub: "립스틱 모핑 광고", why: "시각효과와 자연스러운 모핑(변환) 기술이 뛰어남.", apply: "제품이 생성되는 과정을 화려한 모핑 효과로 연출.", link: "https://www.instagram.com/reel/DRcYez5iD95/?utm_source=ig_web_copy_link&igsh=NTc4MTIwNjQ2YQ==", new: true },
-            { tag: "quality", label: "🎨 퀄리티", color: "blue", name: "Social Cameo (2)", sub: "실/울 소재 입체 로고", why: "SNS 아이콘을 털실 같은 질감으로 변환하는 프롬프트 능력.", apply: "브랜드 로고를 다양한 질감(음식, 보석 등)으로 표현.", link: "https://www.instagram.com/p/DTfebchD3DH/?utm_source=ig_web_copy_link&igsh=NTc4MTIwNjQ2YQ==", new: true },
-            { tag: "marketing", label: "💰 수익화", color: "green", name: "Nashra Khan (@blushugc)", sub: "감각적인 화장품 핸드 샷", why: "제품을 감각적으로 보여주다가 손에 쥐는 트랜지션 아이디어가 좋음.", apply: "핸드 모델링을 활용한 제품 등장 숏폼.", link: "https://www.instagram.com/reel/DTcZQbskrSj/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==", new: true },
-            { tag: "quality", label: "🎨 퀄리티", color: "blue", name: "Nina (@asecretknowledge_ask)", sub: "얼음에 갇힌 가방 깨기", why: "미모의 모델과 얼음을 깨는 행위, 자연스러운 모션의 일관성.", apply: "제품을 얼음이나 돌 속에 숨겨두고 발굴하는 컨셉.", link: "https://www.instagram.com/reel/DSc5kXZDNC_/?igsh=MWMwZjNtcGlqNncyMQ==", new: true },
-            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Christine", sub: "구두 자동차", why: "명품 구두를 자동차로 변환해서 타는 기발한 상상력.", apply: "판매하는 제품을 거대한 탈것으로 변형시키는 영상.", link: "https://www.instagram.com/reel/DQCo5wKiJ9l/?igsh=ejIyZnlndHk0Zmc1", new: true },
-            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Christine", sub: "버스 런웨이", why: "명품 브랜드 버스로 표현해서 런웨이를 걷는 독특한 연출.", apply: "대중교통이나 일상 사물을 패션 아이템으로 승화.", link: "https://www.instagram.com/reel/DSQUKHPiE88/?igsh=bjNyNHhueTRrcGVw", new: true },
-            { tag: "marketing", label: "💰 수익화", color: "green", name: "이윤수 (@showkingcar)", sub: "디월트 공주 드릴", why: "거친 공구를 '공주풍'으로 커스텀하여 반전 매력 선사 (쇼핑 숏폼 참고).", apply: "남성적인 제품을 여성스럽게, 혹은 그 반대로 리폼하는 콘텐츠.", link: "https://www.instagram.com/reel/DS9baSMEzlT/?igsh=dThvOHJxbzVid2t2", new: true },
-            { tag: "editing", label: "🎬 편집", color: "orange", name: "Bar Ben Haim (@lucia.w0o)", sub: "커피 부으면 실물 변환", why: "스케치 위에 액체를 부으면 실사로 변하는 드라마틱한 트랜지션.", apply: "제품 도안에 물을 부으면 실제 제품이 튀어나오는 연출.", link: "https://www.instagram.com/reel/DRlVtjbEWF_/?igsh=MWV5djhnMWVyd2R0dA==", new: true },
-            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Jesse Richards", sub: "책상 금형 틀 4차원 믹스", why: "일상 공간(책상)에서 벌어지는 기이하고 창의적인 4차원 시각 효과.", apply: "책상 위에서 벌어지는 미니 서커스나 공장 가동 영상.", link: "https://www.instagram.com/reel/DRfk0cYEmjZ/?igsh=aHM4NGZyNDBweTNo", new: true },
-            { tag: "editing", label: "🎬 편집", color: "orange", name: "Shifer", sub: "Real vs AI B급 감성", why: "리얼과 AI를 교차 편집하며 유쾌한 B급 감성으로 풀어냄.", apply: "현실의 초라함과 AI의 화려함을 대조하는 개그 릴스.", link: "https://www.instagram.com/reel/DRAT8e8jexS/?igsh=aWhuM3QzMGozbmEw", new: true },
-            { tag: "quality", label: "🎨 퀄리티", color: "blue", name: "Denise Garbis", sub: "극한의 비주얼", why: "압도적인 고퀄리티 비주얼로 시선을 강탈함.", apply: "단 3초 만에 시선을 뺏는 고해상도 인트로 영상.", link: "https://www.instagram.com/reel/DQ6qfIykazv/?igsh=eWJ6bXgxcW1hNXJk", new: true },
-            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "If Only (2)", sub: "명품 보석 버스", why: "버스를 거대한 명품 보석함처럼 표현한 고퀄리티 영상.", apply: "대중교통을 브랜드의 시그니처 아이템으로 튜닝.", link: "https://www.instagram.com/reel/DR_-SN5jG_i/?igsh=ODM1NW05a3VwZHdj", new: true },
-            { tag: "editing", label: "🎬 편집", color: "orange", name: "Margo", sub: "바비 박스 패션 변환", why: "인형 상자 안에서 의상이 바뀌는 트랜지션.", apply: "제품 패키지 안에서 내용물이 계속 바뀌는 연출.", link: "https://www.instagram.com/reel/DR7DDjAAvRu/?igsh=MTJpeDdyMjl5Y2Vweg==", new: true },
-            { tag: "editing", label: "🎬 편집", color: "orange", name: "Fernando Demarchi", sub: "시대별 패션 변천사", why: "한 인물의 패션이 시대별로 자연스럽게 변하는 모핑 영상.", apply: "제품의 역사나 로고 변천사를 모핑으로 표현.", link: "https://www.instagram.com/reel/DQMXg4ikShg/?igsh=MTQxem9oYmFxb2p6Mw==", new: true },
-            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Harshdeep Arora", sub: "명품 브랜드 비행기", why: "비행기 전체를 명품 패턴으로 래핑한 럭셔리한 상상력.", apply: "거대 운송 수단에 브랜드 아이덴티티를 입히는 가상 옥외광고(FOOH).", link: "https://www.instagram.com/reel/DRUalrMjHFx/?igsh=MXd4bjd0ajZjM2c0Mg==", new: true },
-            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Hera Kim (2)", sub: "판타지 도서관", why: "도서관을 판타지 영화 속 건물처럼 웅장하게 변환.", apply: "평범한 공간을 마법의 성처럼 바꾸는 비포/애프터.", link: "https://www.instagram.com/reel/DQrT7kfibcV/?igsh=MWg1bmlkanI0Y3Z4OQ==", new: true },
-            { tag: "character", label: "🧬 캐릭터", color: "purple", name: "AI Creator", sub: "플라스틱 인형 패션", why: "플라스틱 질감 인형에 트렌디한 옷을 입혀 대리 만족 제공.", apply: "마네킹이나 피규어에 신상 의류를 입히는 가상 피팅.", link: "https://www.instagram.com/reel/DRmYbX3DErA/?igsh=MXE0M2U0bmNuejN2dg==", new: true },
-            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Xiao Bo", sub: "보석 페라리", why: "슈퍼카를 보석 질감으로 렌더링하여 화려함 극대화.", apply: "자동차나 기계 부품을 보석/크리스탈로 표현.", link: "https://www.instagram.com/reel/DQcCrg3Ei0h/?igsh=MjNlMGU3eW45aDk=", new: true },
-            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Supercar AI", sub: "투명 플라스틱 슈퍼카", why: "속이 다 비치는 투명 재질로 슈퍼카를 표현한 신선함.", apply: "제품의 내부 구조를 보여주는 투명 에디션 컨셉 영상.", link: "https://www.instagram.com/reel/DSVQnazAQdR/", new: true },
+            // --- NEW ADDITIONS (오늘 추가된 7개) ---
+            { tag: "editing", label: "🎬 편집", color: "orange", name: "ASMR AI", sub: "변기 디자인 모핑 ASMR", why: "여러 디자인의 변기가 연속으로 모핑되며 등장하는 ASMR 스타일.", apply: "다양한 제품 디자인 옵션을 모핑 기법으로 빠르게 보여주는 숏폼.", link: "https://www.instagram.com/reel/DTjRgwGjaPp/?igsh=MW9qandoOW5ic3Bjeg==", new: true },
+            { tag: "editing", label: "🎬 편집", color: "orange", name: "Fashion Morph", sub: "패션 잡화 무한 모핑", why: "가방·구두 등 패션 잡화가 부드럽게 서로 모핑되며 시각적 즐거움 제공.", apply: "시즌별 패션 아이템 라인업을 하나의 흐름으로 연결하는 모핑 영상.", link: "https://www.instagram.com/reel/DSNJNcPgjGK/?igsh=Y2RwYnk2aDhqeWd1", new: true },
+            { tag: "marketing", label: "💰 수익화", color: "green", name: "Health Ad", sub: "실시간 성장 건기식 광고", why: "손톱과 머리카락이 빠르게 자라나는 과장된 효과로 효능 시각화.", apply: "영양제나 화장품의 효능을 직관적이고 빠른 타임랩스로 표현.", link: "https://www.instagram.com/reel/DSwzPfJgX93/?igsh=ZmxrbGlycnd0eDB1", new: true },
+            { tag: "marketing", label: "💰 수익화", color: "green", name: "DIESEL Concept", sub: "프레임 파괴 디젤 광고", why: "화면 프레임(UI)을 불태워버리는 메타적인 연출로 강렬한 인상.", apply: "SNS UI나 화면 프레임을 파괴하는 연출로 주목도 상승.", link: "https://www.instagram.com/reel/DSFvmfTkQP-/?igsh=MTA5bzZmc3h6cWthdg==", new: true },
+            { tag: "marketing", label: "💰 수익화", color: "green", name: "Hair Promo", sub: "대머리 급속 발모 영상", why: "스프레이 하나로 대머리가 풍성해지는 극적인 비포/애프터 연출.", apply: "제품의 효과를 극적으로 과장하여 재미와 호기심 유발.", link: "https://www.instagram.com/reel/DPYvKQYDeTn/?igsh=MmVhaWVvazhjZmtu", new: true },
+            { tag: "editing", label: "🎬 편집", color: "orange", name: "SHEGLAM", sub: "화장품 난도질 ASMR", why: "새 제품을 과장되게 자르고 으깨는 컷 편집으로 시각/청각 자극.", apply: "제품의 질감(텍스처)을 강조하기 위해 과감하게 부수거나 자르는 연출.", link: "https://www.instagram.com/reel/DTAkumHAZua/?igsh=MTVuaWtkNzdiNnA0dA==", new: true },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Cinematic AI", sub: "구름 위 도로 바이크", why: "도로 위에 구름층이 펼쳐진 비현실적인 풍경 속을 질주.", apply: "여행 상품이나 자동차 광고 시 비현실적인 배경 합성으로 로망 자극.", link: "https://www.instagram.com/reel/DLE0_PqtTb7/?igsh=M2ZvMzBzYmNhYjcz", new: true },
 
-            // --- EXISTING ITEMS (기존 항목) ---
+            // --- PREVIOUS ITEMS (이전 항목들) ---
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Hera Kim", sub: "명품 브랜드로 꾸민 세상", why: "샤넬 등 명품 브랜드 컨셉으로 관광 명소나 건물을 재해석하여 시각적 충격 제공.", apply: "특정 브랜드 스타일로 우리 동네나 사무실 꾸미기 콘텐츠.", link: "https://www.instagram.com/reel/DQwriaFiBSc/?utm_source=ig_web_copy_link&igsh=NTc4MTIwNjQ2YQ==" },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "If Only (@ifonly.ai)", sub: "초현실적 패션쇼 & 명소", why: "명품 브랜드와 자연/명소를 결합한 웅장한 런웨이 영상.", apply: "제품이 주인공이 되는 거대한 가상 런웨이 기획.", link: "https://www.instagram.com/reel/DS0DDdRjGcF/?utm_source=ig_web_copy_link&igsh=NTc4MTIwNjQ2YQ==" },
+            { tag: "quality", label: "🎨 퀄리티", color: "blue", name: "Нейросети (@syntx_ai)", sub: "립스틱 모핑 광고", why: "시각효과와 자연스러운 모핑(변환) 기술이 뛰어남.", apply: "제품이 생성되는 과정을 화려한 모핑 효과로 연출.", link: "https://www.instagram.com/reel/DRcYez5iD95/?utm_source=ig_web_copy_link&igsh=NTc4MTIwNjQ2YQ==" },
+            { tag: "quality", label: "🎨 퀄리티", color: "blue", name: "Social Cameo (2)", sub: "실/울 소재 입체 로고", why: "SNS 아이콘을 털실 같은 질감으로 변환하는 프롬프트 능력.", apply: "브랜드 로고를 다양한 질감(음식, 보석 등)으로 표현.", link: "https://www.instagram.com/p/DTfebchD3DH/?utm_source=ig_web_copy_link&igsh=NTc4MTIwNjQ2YQ==" },
+            { tag: "marketing", label: "💰 수익화", color: "green", name: "Nashra Khan (@blushugc)", sub: "감각적인 화장품 핸드 샷", why: "제품을 감각적으로 보여주다가 손에 쥐는 트랜지션 아이디어가 좋음.", apply: "핸드 모델링을 활용한 제품 등장 숏폼.", link: "https://www.instagram.com/reel/DTcZQbskrSj/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==" },
+            { tag: "quality", label: "🎨 퀄리티", color: "blue", name: "Nina (@asecretknowledge_ask)", sub: "얼음에 갇힌 가방 깨기", why: "미모의 모델과 얼음을 깨는 행위, 자연스러운 모션의 일관성.", apply: "제품을 얼음이나 돌 속에 숨겨두고 발굴하는 컨셉.", link: "https://www.instagram.com/reel/DSc5kXZDNC_/?igsh=MWMwZjNtcGlqNncyMQ==" },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Christine", sub: "구두 자동차", why: "명품 구두를 자동차로 변환해서 타는 기발한 상상력.", apply: "판매하는 제품을 거대한 탈것으로 변형시키는 영상.", link: "https://www.instagram.com/reel/DQCo5wKiJ9l/?igsh=ejIyZnlndHk0Zmc1" },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Christine", sub: "버스 런웨이", why: "명품 브랜드 버스로 표현해서 런웨이를 걷는 독특한 연출.", apply: "대중교통이나 일상 사물을 패션 아이템으로 승화.", link: "https://www.instagram.com/reel/DSQUKHPiE88/?igsh=bjNyNHhueTRrcGVw" },
+            { tag: "marketing", label: "💰 수익화", color: "green", name: "이윤수 (@showkingcar)", sub: "디월트 공주 드릴", why: "거친 공구를 '공주풍'으로 커스텀하여 반전 매력 선사 (쇼핑 숏폼 참고).", apply: "남성적인 제품을 여성스럽게, 혹은 그 반대로 리폼하는 콘텐츠.", link: "https://www.instagram.com/reel/DS9baSMEzlT/?igsh=dThvOHJxbzVid2t2" },
+            { tag: "editing", label: "🎬 편집", color: "orange", name: "Bar Ben Haim (@lucia.w0o)", sub: "커피 부으면 실물 변환", why: "스케치 위에 액체를 부으면 실사로 변하는 드라마틱한 트랜지션.", apply: "제품 도안에 물을 부으면 실제 제품이 튀어나오는 연출.", link: "https://www.instagram.com/reel/DRlVtjbEWF_/?igsh=MWV5djhnMWVyd2R0dA==" },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Jesse Richards", sub: "책상 금형 틀 4차원 믹스", why: "일상 공간(책상)에서 벌어지는 기이하고 창의적인 4차원 시각 효과.", apply: "책상 위에서 벌어지는 미니 서커스나 공장 가동 영상.", link: "https://www.instagram.com/reel/DRfk0cYEmjZ/?igsh=aHM4NGZyNDBweTNo" },
+            { tag: "editing", label: "🎬 편집", color: "orange", name: "Shifer", sub: "Real vs AI B급 감성", why: "리얼과 AI를 교차 편집하며 유쾌한 B급 감성으로 풀어냄.", apply: "현실의 초라함과 AI의 화려함을 대조하는 개그 릴스.", link: "https://www.instagram.com/reel/DRAT8e8jexS/?igsh=aWhuM3QzMGozbmEw" },
+            { tag: "quality", label: "🎨 퀄리티", color: "blue", name: "Denise Garbis", sub: "극한의 비주얼", why: "압도적인 고퀄리티 비주얼로 시선을 강탈함.", apply: "단 3초 만에 시선을 뺏는 고해상도 인트로 영상.", link: "https://www.instagram.com/reel/DQ6qfIykazv/?igsh=eWJ6bXgxcW1hNXJk" },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "If Only (2)", sub: "명품 보석 버스", why: "버스를 거대한 명품 보석함처럼 표현한 고퀄리티 영상.", apply: "대중교통을 브랜드의 시그니처 아이템으로 튜닝.", link: "https://www.instagram.com/reel/DR_-SN5jG_i/?igsh=ODM1NW05a3VwZHdj" },
+            { tag: "editing", label: "🎬 편집", color: "orange", name: "Margo", sub: "바비 박스 패션 변환", why: "인형 상자 안에서 의상이 바뀌는 트랜지션.", apply: "제품 패키지 안에서 내용물이 계속 바뀌는 연출.", link: "https://www.instagram.com/reel/DR7DDjAAvRu/?igsh=MTJpeDdyMjl5Y2Vweg==" },
+            { tag: "editing", label: "🎬 편집", color: "orange", name: "Fernando Demarchi", sub: "시대별 패션 변천사", why: "한 인물의 패션이 시대별로 자연스럽게 변하는 모핑 영상.", apply: "제품의 역사나 로고 변천사를 모핑으로 표현.", link: "https://www.instagram.com/reel/DQMXg4ikShg/?igsh=MTQxem9oYmFxb2p6Mw==" },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Harshdeep Arora", sub: "명품 브랜드 비행기", why: "비행기 전체를 명품 패턴으로 래핑한 럭셔리한 상상력.", apply: "거대 운송 수단에 브랜드 아이덴티티를 입히는 가상 옥외광고(FOOH).", link: "https://www.instagram.com/reel/DRUalrMjHFx/?igsh=MXd4bjd0ajZjM2c0Mg==" },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Hera Kim (2)", sub: "판타지 도서관", why: "도서관을 판타지 영화 속 건물처럼 웅장하게 변환.", apply: "평범한 공간을 마법의 성처럼 바꾸는 비포/애프터.", link: "https://www.instagram.com/reel/DQrT7kfibcV/?igsh=MWg1bmlkanI0Y3Z4OQ==" },
+            { tag: "character", label: "🧬 캐릭터", color: "purple", name: "AI Creator", sub: "플라스틱 인형 패션", why: "플라스틱 질감 인형에 트렌디한 옷을 입혀 대리 만족 제공.", apply: "마네킹이나 피규어에 신상 의류를 입히는 가상 피팅.", link: "https://www.instagram.com/reel/DRmYbX3DErA/?igsh=MXE0M2U0bmNuejN2dg==" },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Xiao Bo", sub: "보석 페라리", why: "슈퍼카를 보석 질감으로 렌더링하여 화려함 극대화.", apply: "자동차나 기계 부품을 보석/크리스탈로 표현.", link: "https://www.instagram.com/reel/DQcCrg3Ei0h/?igsh=MjNlMGU3eW45aDk=" },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Supercar AI", sub: "투명 플라스틱 슈퍼카", why: "속이 다 비치는 투명 재질로 슈퍼카를 표현한 신선함.", apply: "제품의 내부 구조를 보여주는 투명 에디션 컨셉 영상.", link: "https://www.instagram.com/reel/DSVQnazAQdR/" },
             { tag: "quality", label: "🎨 퀄리티", color: "blue", name: "Brad Ziemer", sub: "건물 건축 노가다 긴 영상", why: "건물이 스스로 지어지는 과정을 매끄러운 타임랩스(In-painting)로 보여주어 시각적 쾌감 제공.", apply: "복잡한 기계나 실험 장비가 조립되는 과정을 타임랩스 형식으로 연출.", link: "https://www.instagram.com/reel/DS7o0EIDTqa/" },
             { tag: "quality", label: "🎨 퀄리티", color: "blue", name: "Rourke Sefton-Minns", sub: "광고용 프롬프트 & 스토리보드", why: "LTX Studio를 활용한 정교한 사전 기획(스토리보드)으로 AI 광고의 퀄리티와 개연성 확보.", apply: "긴 호흡의 영상 제작 시 사전 컷별 기획(프리프로덕션) 도입.", link: "https://www.instagram.com/reel/DTN_mt0E_Xx/" },
             { tag: "quality", label: "🎨 퀄리티", color: "blue", name: "비주얼프리즘", sub: "Nano Banana 라이팅", why: "'Soft Light', 'Kicker Light' 등 전문 조명 용어를 사용하여 실사 같은 분위기 연출.", apply: "썸네일이나 인트로 제작 시 조명 프롬프트를 적극 활용하여 때깔 높이기.", link: "https://www.instagram.com/p/DSEnYqRibgq/" },
@@ -230,10 +240,7 @@
             let newCount = 0;
 
             db.forEach((item, index) => {
-                // 필터링 적용
                 if (filter !== 'all' && item.tag !== filter) return;
-
-                // 새 콘텐츠 카운트 증가
                 if (item.new) newCount++;
 
                 const isSearch = item.link.includes('google.com'); 
@@ -276,33 +283,56 @@
                 grid.innerHTML += cardHTML;
             });
             
-            // 상단 카운터 업데이트
             document.getElementById('total-count').innerText = db.length;
             
-            // 필터링 상태일 때는 '필터된 개수 중 New 개수'를 보여줄 수도 있지만, 
-            // 여기서는 '전체 DB 중 오늘 추가된 총 개수'를 고정적으로 보여주는 것이 더 의미있을 것 같아 고정값으로 계산합니다.
-            // (filter 루프 밖에서 전체 DB 기준으로 다시 계산)
             const totalNewCount = db.filter(item => item.new).length;
             document.getElementById('new-count-display').innerText = `${totalNewCount}개`;
+            
+            document.getElementById('update-date').innerText = LAST_UPDATE_DATE;
         }
 
-        // 초기 렌더링
         renderCards();
         
-        // localStorage에서 Key 불러오기
         window.addEventListener('load', () => {
             const savedKey = localStorage.getItem('gemini_api_key');
-            if (savedKey) {
-                document.getElementById('api-key-input').value = savedKey;
+            updateApiUi(savedKey);
+        });
+
+        function updateApiUi(localKey) {
+            const container = document.getElementById('api-key-section');
+            if (HOST_API_KEY && HOST_API_KEY.length > 10) {
+                container.innerHTML = `
+                    <div class="flex items-center justify-between text-indigo-300">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-server text-indigo-400"></i>
+                            <span class="text-sm font-bold">Host Key Active</span>
+                        </div>
+                        <span class="text-xs bg-indigo-500/20 px-2 py-1 rounded text-indigo-300">Free Mode</span>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-1">호스트가 제공하는 API Key로 무료로 이용할 수 있습니다.</p>
+                `;
+                return;
             }
-        });
+            const inputValue = localKey || "";
+            container.innerHTML = `
+                <label class="block text-xs font-bold text-indigo-400 mb-2 uppercase tracking-wider flex justify-between">
+                    <span>Google Gemini API Key (Test Mode)</span>
+                    <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-slate-500 hover:text-indigo-300 underline cursor-pointer">키 발급받기 ↗</a>
+                </label>
+                <input type="password" id="api-key-input" value="${inputValue}" placeholder="API Key 입력 (자동 저장됨)" class="w-full bg-slate-900 border border-slate-700 rounded-md py-2 px-3 text-white text-sm focus:outline-none focus:border-indigo-500 transition-colors">
+                <p class="text-[10px] text-slate-600 mt-2">
+                    <i class="fa-solid fa-circle-info mr-1"></i>
+                    <strong>호스팅 팁:</strong> 다른 사람과 공유하려면 코드 맨 윗줄 <code>HOST_API_KEY</code> 변수에 키를 입력하고 배포하세요.
+                </p>
+            `;
+            const input = document.getElementById('api-key-input');
+            if(input) {
+                input.addEventListener('input', (e) => {
+                    localStorage.setItem('gemini_api_key', e.target.value.trim());
+                });
+            }
+        }
 
-        // Key 입력 시 자동 저장
-        document.getElementById('api-key-input').addEventListener('input', (e) => {
-            localStorage.setItem('gemini_api_key', e.target.value.trim());
-        });
-
-        // 필터링 기능
         function filterCards(category) {
             const buttons = document.querySelectorAll('.filter-btn');
             buttons.forEach(btn => {
@@ -315,7 +345,6 @@
             renderCards(category);
         }
 
-        // 모달 및 AI 기능
         let currentContext = {};
 
         function openAiModal(title, analysisId, actionId) {
@@ -344,11 +373,15 @@
         });
 
         async function generateIdea() {
-            // 사용자 입력 API Key 사용
-            const apiKey = document.getElementById('api-key-input').value.trim();
+            let apiKey = HOST_API_KEY;
+            if (!apiKey || apiKey.length < 10) {
+                const inputEl = document.getElementById('api-key-input');
+                apiKey = inputEl ? inputEl.value.trim() : localStorage.getItem('gemini_api_key');
+            }
+            
             const userQuery = document.getElementById('user-prompt-input').value;
             
-            if (!apiKey) return alert("상단의 Google Gemini API Key를 입력해주세요!");
+            if (!apiKey) return alert("API Key가 필요합니다. 상단 입력창을 확인하거나 호스트 키를 설정해주세요.");
             if (!userQuery) return alert("주제를 입력해주세요!");
 
             const btnText = document.getElementById('btn-text');
@@ -377,7 +410,6 @@
             `;
 
             try {
-                // 모델 변경: 현재 환경에서 지원하는 최신 모델로 업데이트
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -387,7 +419,6 @@
                     })
                 });
 
-                // 429 Quota Exceeded 핸들링 추가
                 if (response.status === 429) {
                     throw new Error("API 요청 횟수 초과! ⏳ 1분 정도 쉬었다가 다시 시도해주세요. (무료 버전 제한)");
                 }
