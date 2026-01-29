@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Creator's Insight Dashboard (Full Link Ver)</title>
+    <title>Ai winners Insta DB By 안주성</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 폰트: Pretendard -->
@@ -13,169 +13,322 @@
     <!-- 마크다운 파서 -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'trend-bg': '#050b14', // Deep Midnight
+                        'trend-teal': '#2dd4bf', // 2026 Transformative Teal
+                        'trend-purple': '#a855f7', // Digital Lavender
+                        'trend-pink': '#f472b6',
+                        'trend-card': '#0f172a',
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
         body {
             font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
-            background-color: #0f172a;
+            background-color: #050b14;
+            color: #e2e8f0;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(45, 212, 191, 0.08), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(168, 85, 247, 0.08), transparent 25%);
         }
         
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #1e293b; }
-        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+        /* 스크롤바 */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #050b14; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
 
-        .card-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .card-hover:hover { transform: translateY(-5px); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5); }
-
-        .fade-in { animation: fadeIn 0.5s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .modal-backdrop { background-color: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); }
-        .ai-border { position: relative; }
-        .ai-border::before {
-            content: ""; position: absolute; inset: -2px; border-radius: 14px; padding: 2px;
-            background: linear-gradient(45deg, #60a5fa, #c084fc);
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
+        /* 카드 애니메이션 & 호버 효과 (핵심) */
+        .card-enter { 
+            animation: fadeInUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; 
+            opacity: 0; 
+            transform: translateY(30px); 
         }
-        
+        @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+
+        .card-container {
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); /* 쫀득한 느낌의 베지어 곡선 */
+            border: 1px solid rgba(255,255,255,0.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 100%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .card-container:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: rgba(45, 212, 191, 0.5); /* Teal Border Glow */
+            box-shadow: 
+                0 20px 40px -10px rgba(0, 0, 0, 0.7),
+                0 0 20px -5px rgba(45, 212, 191, 0.2); /* Teal Glow */
+            z-index: 10;
+            background-color: #1e293b;
+        }
+
+        .card-container:hover::before {
+            opacity: 1;
+        }
+
+        .card-container:hover h3 {
+            color: #2dd4bf; /* Title turns Teal */
+        }
+
+        /* NEW 뱃지 애니메이션 */
+        .new-badge-pulse {
+            animation: pulse-glow 2s infinite;
+        }
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 0 0 rgba(244, 114, 182, 0.4); }
+            70% { box-shadow: 0 0 0 6px rgba(244, 114, 182, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(244, 114, 182, 0); }
+        }
+
+        /* 필터 버튼 스타일 */
+        .filter-btn {
+            backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
+        }
+        .filter-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .filter-btn.active {
+            background: linear-gradient(135deg, #2dd4bf 0%, #0ea5e9 100%);
+            border: none;
+            color: #0f172a;
+            box-shadow: 0 0 15px rgba(45, 212, 191, 0.4);
+        }
+
+        /* 모달 스타일 */
+        .modal-backdrop { background-color: rgba(5, 11, 20, 0.85); backdrop-filter: blur(12px); }
+        .modal-content {
+            background: linear-gradient(145deg, #0f172a 0%, #020617 100%);
+            border: 1px solid rgba(45, 212, 191, 0.3);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+        }
+
+        /* 로딩 스피너 */
         .loader {
-            border: 3px solid #f3f3f3; border-radius: 50%; border-top: 3px solid #a855f7;
-            width: 24px; height: 24px; animation: spin 1s linear infinite;
+            border: 2px solid rgba(45, 212, 191, 0.1);
+            border-left-color: #2dd4bf;
+            border-radius: 50%;
+            width: 20px; height: 20px;
+            animation: spin 1s linear infinite;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        .prose h1, .prose h2, .prose h3 { color: #e2e8f0; font-weight: 700; margin-top: 1em; margin-bottom: 0.5em; }
-        .prose p, .prose ul { margin-bottom: 0.8em; color: #cbd5e1; }
-        .prose strong { color: #f8fafc; font-weight: 600; }
-        .prose code { background: #1e293b; padding: 2px 4px; rounded: 4px; color: #f472b6; font-size: 0.9em; }
+        /* 마크다운 스타일 */
+        .prose h1, .prose h2, .prose h3 { color: #f1f5f9; font-weight: 800; }
+        .prose strong { color: #2dd4bf; }
     </style>
 </head>
-<body class="text-slate-200 min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col">
 
-    <!-- 헤더 -->
-    <header class="bg-slate-900/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-800">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            
-            <!-- 업데이트 정보 바 -->
-            <div class="flex justify-center mb-6">
-                <div class="inline-flex items-center gap-4 bg-slate-800/80 border border-slate-700 rounded-full px-5 py-2 text-xs font-medium shadow-lg backdrop-blur-sm">
-                    <div class="flex items-center gap-1.5 text-slate-400">
-                        <i class="fa-regular fa-calendar-check text-indigo-400"></i>
-                        <span>Last Update:</span>
-                        <span id="update-date" class="text-slate-200 font-bold"></span>
+    <!-- 상단 고정 헤더 -->
+    <header class="bg-slate-900/60 backdrop-blur-xl border-b border-slate-800 sticky top-0 z-40 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-6">
+                <!-- 로고 타이틀 -->
+                <div class="flex flex-col">
+                    <h1 class="text-2xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-trend-teal via-cyan-400 to-trend-purple">
+                        Ai winners Insta DB
+                    </h1>
+                    <span class="text-[10px] font-bold text-slate-500 tracking-[0.2em] uppercase">By 안주성</span>
+                </div>
+
+                <!-- 상태 표시줄 (데스크탑) -->
+                <div class="hidden lg:flex items-center gap-0.5 bg-slate-800/50 rounded-full p-1 pl-4 pr-1 border border-slate-700/50">
+                    <div class="flex items-center gap-3 text-xs font-medium mr-3">
+                        <span class="text-slate-400">Update <span id="header-date" class="text-slate-200 ml-1"></span></span>
+                        <div class="w-1 h-1 rounded-full bg-slate-600"></div>
+                        <span class="text-slate-400">Total <span id="header-total" class="text-white ml-1">0</span></span>
                     </div>
-                    <div class="w-px h-3 bg-slate-700"></div>
-                    <div class="flex items-center gap-1.5 text-slate-400">
-                        <i class="fa-solid fa-layer-group text-pink-400"></i>
-                        <span>New Contents:</span>
-                        <span id="new-count-display" class="text-pink-400 font-bold bg-pink-400/10 px-1.5 py-0.5 rounded">0개</span>
+                    <div class="flex items-center gap-1.5 bg-trend-pink/10 px-3 py-1 rounded-full border border-trend-pink/20">
+                        <div class="w-1.5 h-1.5 rounded-full bg-trend-pink animate-pulse"></div>
+                        <span class="text-xs font-bold text-trend-pink">New <span id="header-new">0</span></span>
                     </div>
                 </div>
             </div>
 
-            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-                <div>
-                    <h1 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
-                        AI Creator's Insight DB
-                    </h1>
-                    <p class="text-slate-400 text-sm mt-1">안주성을 위한 전체 레퍼런스 분석 (총 <span id="total-count">0</span>개)</p>
+            <!-- 검색창 -->
+            <div class="relative w-full max-w-xs group">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="fa-solid fa-magnifying-glass text-slate-500 group-focus-within:text-trend-teal transition-colors"></i>
                 </div>
-                
-                <div class="flex flex-wrap justify-center gap-2">
-                    <button onclick="filterCards('all')" class="filter-btn active px-4 py-2 rounded-full text-xs font-semibold bg-white text-slate-900 ring-2 ring-white transition-all" data-filter="all">전체</button>
-                    <button onclick="filterCards('quality')" class="filter-btn px-4 py-2 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 transition-all" data-filter="quality">🎨 퀄리티</button>
-                    <button onclick="filterCards('surreal')" class="filter-btn px-4 py-2 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 transition-all" data-filter="surreal">🤯 초현실</button>
-                    <button onclick="filterCards('marketing')" class="filter-btn px-4 py-2 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 transition-all" data-filter="marketing">💰 수익화</button>
-                    <button onclick="filterCards('editing')" class="filter-btn px-4 py-2 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 transition-all" data-filter="editing">🎬 편집</button>
-                    <button onclick="filterCards('character')" class="filter-btn px-4 py-2 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 transition-all" data-filter="character">🧬 캐릭터</button>
-                    <button onclick="filterCards('niche')" class="filter-btn px-4 py-2 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 transition-all" data-filter="niche">🎯 니치</button>
+                <input type="text" id="search-input" placeholder="Search insights..." 
+                    class="block w-full pl-10 pr-3 py-2.5 border border-slate-700 rounded-xl leading-5 bg-slate-800/50 text-slate-300 placeholder-slate-500 focus:outline-none focus:bg-slate-900 focus:border-trend-teal focus:ring-1 focus:ring-trend-teal sm:text-sm transition-all duration-200">
+            </div>
+        </div>
+        
+        <!-- 필터 탭 -->
+        <div class="border-t border-slate-800/50 bg-slate-900/30">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 overflow-x-auto custom-scrollbar">
+                <div class="flex gap-3 min-w-max p-1">
+                    <button onclick="filterList('all')" class="filter-btn active px-5 py-2 rounded-full text-xs font-bold bg-slate-800 text-slate-400 border border-slate-700" data-filter="all">ALL VIEW</button>
+                    <button onclick="filterList('quality')" class="filter-btn px-5 py-2 rounded-full text-xs font-bold bg-slate-800 text-slate-400 border border-slate-700" data-filter="quality">🎨 퀄리티/기술</button>
+                    <button onclick="filterList('surreal')" class="filter-btn px-5 py-2 rounded-full text-xs font-bold bg-slate-800 text-slate-400 border border-slate-700" data-filter="surreal">🤯 후킹/초현실</button>
+                    <button onclick="filterList('marketing')" class="filter-btn px-5 py-2 rounded-full text-xs font-bold bg-slate-800 text-slate-400 border border-slate-700" data-filter="marketing">💰 마케팅/수익화</button>
+                    <button onclick="filterList('editing')" class="filter-btn px-5 py-2 rounded-full text-xs font-bold bg-slate-800 text-slate-400 border border-slate-700" data-filter="editing">🎬 연출/편집</button>
+                    <button onclick="filterList('character')" class="filter-btn px-5 py-2 rounded-full text-xs font-bold bg-slate-800 text-slate-400 border border-slate-700" data-filter="character">🧬 캐릭터/세계관</button>
+                    <button onclick="filterList('niche')" class="filter-btn px-5 py-2 rounded-full text-xs font-bold bg-slate-800 text-slate-400 border border-slate-700" data-filter="niche">🎯 타겟/니치</button>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- 메인 그리드 -->
-    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
-        <div id="card-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Cards will be injected here by JavaScript -->
+    <!-- 메인 그리드 컨텐츠 -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full">
+        <div id="card-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- 자바스크립트로 카드가 여기에 생성됩니다 -->
+        </div>
+        
+        <!-- 검색 결과 없음 메시지 -->
+        <div id="no-results" class="hidden flex-col items-center justify-center py-32 text-slate-600">
+            <i class="fa-solid fa-magnifying-glass text-5xl mb-4 opacity-20 animate-pulse"></i>
+            <p class="font-medium text-lg">No results found</p>
+            <p class="text-sm">Try searching for something else.</p>
         </div>
     </main>
 
-    <footer class="border-t border-slate-800 py-6 mt-8">
-        <div class="max-w-7xl mx-auto px-4 text-center">
-            <p class="text-slate-500 text-sm">Created for PD's Creative Journey with Gemini API</p>
-        </div>
-    </footer>
-
-    <!-- AI Modal -->
-    <div id="ai-modal" class="fixed inset-0 z-[100] hidden modal-backdrop flex items-center justify-center px-4">
-        <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden ai-border flex flex-col max-h-[90vh]">
-            <div class="p-6 border-b border-slate-800 bg-slate-900/50 flex justify-between items-center">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-violet-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-500/30">
-                        <i class="fa-solid fa-wand-magic-sparkles text-white text-lg"></i>
-                    </div>
-                    <div>
-                        <h2 class="text-xl font-bold text-white">AI Creative Partner</h2>
-                        <p class="text-slate-400 text-xs">Based on <span id="modal-context-title" class="text-indigo-400 font-semibold">Reference</span></p>
-                    </div>
-                </div>
-                <button onclick="closeAiModal()" class="text-slate-400 hover:text-white w-8 h-8 rounded-full hover:bg-slate-800 flex items-center justify-center"><i class="fa-solid fa-xmark text-xl"></i></button>
-            </div>
-            <div class="p-6 overflow-y-auto custom-scrollbar flex-grow">
+    <!-- 상세 보기 모달 -->
+    <div id="detail-modal" class="fixed inset-0 z-50 hidden modal-backdrop flex items-center justify-center p-4 sm:p-6">
+        <div class="modal-content w-full max-w-3xl rounded-2xl overflow-hidden flex flex-col max-h-[85vh] animate-scale-up">
+            
+            <!-- 모달 헤더 -->
+            <div class="relative bg-slate-900/50 p-8 border-b border-slate-800/50">
+                <button onclick="closeDetailModal()" class="absolute top-6 right-6 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-full w-9 h-9 flex items-center justify-center transition-all hover:rotate-90">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
                 
-                <!-- API Key Section (Conditional) -->
-                <div id="api-key-section" class="mb-6 p-4 bg-slate-950/50 rounded-lg border border-indigo-500/30 transition-all">
-                    <!-- JS will inject content here -->
+                <div class="flex items-center gap-3 mb-4">
+                    <span id="modal-tag" class="px-3 py-1 rounded-md text-[10px] font-black uppercase tracking-widest border border-white/10 bg-white/5 text-slate-300">TAG</span>
+                    <span id="modal-new-badge" class="hidden bg-trend-pink text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-[0_0_10px_rgba(244,114,182,0.5)]">NEW</span>
+                </div>
+                <h2 id="modal-title" class="text-3xl md:text-4xl font-black text-white mb-2 leading-tight bg-clip-text text-transparent bg-gradient-to-br from-white to-slate-400">Title</h2>
+                <p id="modal-sub" class="text-slate-400 text-sm font-medium border-l-2 border-trend-teal pl-3 ml-1">Subtitle</p>
+            </div>
+
+            <!-- 모달 내용 (스크롤) -->
+            <div class="p-8 overflow-y-auto custom-scrollbar bg-[#0b1120]">
+                <!-- 분석 내용 -->
+                <div class="grid md:grid-cols-2 gap-6 mb-10">
+                    <div class="bg-slate-800/40 p-6 rounded-2xl border border-slate-700/50 hover:border-yellow-500/30 transition-colors group">
+                        <h3 class="text-yellow-500 text-xs font-bold mb-3 uppercase flex items-center gap-2">
+                            <i class="fa-regular fa-lightbulb text-sm group-hover:animate-bounce"></i> Why it works
+                        </h3>
+                        <p id="modal-why" class="text-slate-300 text-sm leading-7 font-light"></p>
+                    </div>
+                    <div class="bg-slate-800/40 p-6 rounded-2xl border border-slate-700/50 hover:border-trend-teal/30 transition-colors group">
+                        <h3 class="text-trend-teal text-xs font-bold mb-3 uppercase flex items-center gap-2">
+                            <i class="fa-solid fa-rocket text-sm group-hover:translate-x-1 transition-transform"></i> Apply Point
+                        </h3>
+                        <p id="modal-apply" class="text-slate-300 text-sm leading-7 font-light"></p>
+                    </div>
                 </div>
 
-                <div class="mb-6 space-y-4">
-                    <div class="bg-slate-800/50 rounded-lg p-4 border border-slate-700/50">
-                        <label class="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">CONTEXT</label>
-                        <p id="modal-context-text" class="text-sm text-slate-300 italic mb-2"></p>
-                        <p id="modal-action-text" class="text-sm text-emerald-400/90 font-medium"></p>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-bold text-white mb-2">적용할 주제 입력</label>
-                        <div class="relative">
-                            <input type="text" id="user-prompt-input" placeholder="예: 경제 용어 설명, 화산 폭발 실험, 신제품 가습기" class="w-full bg-slate-800 border border-slate-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
-                            <button onclick="generateIdea()" class="absolute right-2 top-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-md px-4 py-1.5 text-sm font-bold flex items-center gap-2 transition-colors">
-                                <span id="btn-text">생성</span>
-                                <div id="btn-loader" class="loader hidden" style="width: 14px; height: 14px; border-width: 2px;"></div>
+                <!-- AI 생성 영역 -->
+                <div class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-1 border border-slate-700/50 shadow-2xl">
+                    <div class="bg-[#0f172a] rounded-xl p-6">
+                        <div class="flex items-center justify-between mb-5">
+                            <h3 class="text-white text-sm font-bold flex items-center gap-2">
+                                <span class="flex items-center justify-center w-6 h-6 rounded bg-gradient-to-tr from-trend-teal to-blue-500 text-white text-xs">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                </span>
+                                AI 아이디어 확장
+                            </h3>
+                            <!-- API Key 입력 토글 -->
+                            <button onclick="toggleApiKeyInput()" class="text-[10px] text-slate-500 hover:text-trend-teal transition-colors">API Key 설정</button>
+                        </div>
+
+                        <!-- API Key 입력창 (숨김/표시) -->
+                        <div id="api-key-container" class="hidden mb-4 p-3 bg-slate-950 rounded-lg border border-slate-800">
+                            <input type="password" id="api-key-input" placeholder="Google Gemini API Key 입력" class="w-full bg-transparent border-b border-slate-700 py-1 text-xs text-white focus:border-trend-teal focus:outline-none transition-colors mb-1">
+                            <p class="text-[9px] text-slate-600">* 키는 브라우저 로컬 스토리지에만 안전하게 저장됩니다.</p>
+                        </div>
+
+                        <div class="flex gap-3">
+                            <input type="text" id="ai-prompt-input" placeholder="이 레퍼런스를 적용할 내 주제 입력 (예: 화장품 광고, 여행 브이로그)" class="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-sm text-white focus:ring-1 focus:ring-trend-teal focus:border-trend-teal focus:outline-none transition-all placeholder-slate-600">
+                            <button onclick="generateIdea()" class="bg-white hover:bg-slate-200 text-slate-900 rounded-lg px-6 py-3 text-sm font-bold flex items-center gap-2 transition-colors shrink-0 shadow-lg shadow-white/10">
+                                <span>생성하기</span>
+                                <div id="ai-loader" class="loader hidden !border-slate-300 !border-t-slate-900"></div>
                             </button>
                         </div>
+
+                        <!-- AI 결과 -->
+                        <div id="ai-result" class="hidden mt-6 pt-6 border-t border-slate-800 prose prose-invert prose-sm max-w-none prose-headings:text-trend-teal prose-strong:text-white"></div>
                     </div>
                 </div>
-                <div id="ai-response-area" class="hidden">
-                    <div class="flex items-center gap-2 mb-3"><span class="text-xs font-bold text-indigo-400 uppercase">Gemini's Suggestion</span><div class="h-px bg-slate-700 flex-grow"></div></div>
-                    <div id="markdown-output" class="prose prose-invert max-w-none text-sm bg-slate-900/50 p-5 rounded-xl border border-slate-800"></div>
-                </div>
+            </div>
+
+            <!-- 모달 하단 버튼 -->
+            <div class="p-6 border-t border-slate-800 bg-slate-900/80 flex flex-col sm:flex-row justify-between items-center gap-4 backdrop-blur-md">
+                <span class="text-xs text-slate-500 font-mono order-2 sm:order-1">Reference ID: <span id="ref-id">#001</span></span>
+                <a id="modal-link-btn" href="#" target="_blank" class="order-1 sm:order-2 w-full sm:w-auto bg-gradient-to-r from-pink-600 to-rose-500 hover:from-pink-500 hover:to-rose-400 text-white font-bold py-3.5 px-8 rounded-xl flex items-center justify-center gap-2.5 transition-all shadow-lg shadow-pink-900/20 hover:shadow-pink-600/30 transform hover:-translate-y-0.5 hover:scale-[1.02]">
+                    <i class="fa-brands fa-instagram text-xl"></i>
+                    <span>인스타그램 원본 보기</span>
+                </a>
             </div>
         </div>
     </div>
 
     <script>
         // =================================================================
-        // [호스트 설정] 배포 시 아래 따옴표 안에 API Key를 입력하세요.
+        // [설정] 호스트 API 키 (배포 시 입력)
         const HOST_API_KEY = ""; 
+        const LAST_UPDATE_DATE = "2026. 01. 29";
         // =================================================================
 
-        const LAST_UPDATE_DATE = "2026. 01. 28"; // 오늘 날짜로 업데이트
-
-        // 전체 데이터 베이스
+        // 데이터베이스 (총 92개)
         const db = [
-            // --- NEW ADDITIONS (오늘 추가된 8개) ---
-            { tag: "quality", label: "🎨 퀄리티", color: "blue", name: "Hyperzoom Face", sub: "여자 얼굴 하이퍼줌", why: "여성 얼굴을 극도로 확대하여 미세한 디테일까지 드러내는 AI 초고화질 포토그래피.", apply: "뷰티 제품의 텍스처나 피부 결을 강조하는 초근접 광고 영상.", link: "https://www.instagram.com/reel/DSSa5qmDyOL/?igsh=MTZjNnY0d204bTkzbQ==", new: true },
-            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Impossible Pose", sub: "불가능한 포즈 모델", why: "현실적으로 불가능한 신체 포즈를 취한 여성 모델로 시각적 기이함과 예술성 강조.", apply: "패션 화보나 브랜드 룩북에서 시선을 끄는 아방가르드한 포즈 연출.", link: "https://www.instagram.com/p/DT77sBCDFmm/?utm_source=ig_web_copy_link&igsh=NTc4MTIwNjQ2YQ==", new: true },
-            { tag: "quality", label: "🎨 퀄리티", color: "blue", name: "Skyfall Beauty", sub: "스카이폴 & 아이템 클로즈업", why: "하늘에서 떨어지다 공중에서 멈춰 화장품이 흩어지는 역동적이고 몽환적인 연출.", apply: "제품 패키지가 공중에서 분해되거나 흩날리는 임팩트 있는 인트로.", link: "https://www.instagram.com/reel/DT2mUkmDRZd/?utm_source=ig_web_copy_link&igsh=NTc4MTIwNjQ2YQ==", new: true },
-            { tag: "character", label: "🧬 캐릭터", color: "purple", name: "Plastic Couture", sub: "플라스틱 질감 피팅", why: "1960년대 패션 인형 스타일로 렌더링된 플라스틱 질감 모델의 독특한 무드.", apply: "레트로 컨셉의 의류나 액세서리를 인형 컨셉으로 룩북 제작.", link: "https://www.instagram.com/p/DTPF37okrry/?utm_source=ig_web_copy_link&igsh=NTc4MTIwNjQ2YQ==", new: true },
-            { tag: "marketing", label: "💰 수익화", color: "green", name: "Art Style Ad", sub: "명화 스타일 샤넬 광고", why: "유명 화가(인상파, 입체파)의 그림체로 명품 패션을 재현하여 고급스러움 강조.", apply: "브랜드 헤리티지를 예술 작품과 결합한 아트 마케팅 영상.", link: "https://www.instagram.com/reel/DT8fntKCBdn/?utm_source=ig_web_copy_link&igsh=NTc4MTIwNjQ2YQ==", new: true },
-            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Valentin Loiseau", sub: "크루즈 화물칸 인형 낙하", why: "크루즈 화물칸에서 인형들이 끝없이 떨어지는 초현실적이고 기이한 루프 영상.", apply: "대량의 제품이 쏟아지거나 쌓이는 물량 공세형 숏폼.", link: "https://www.instagram.com/reel/DT93Z6kDYCG/?utm_source=ig_web_copy_link&igsh=NTc4MTIwNjQ2YQ==", new: true },
-            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Gucci Objects", sub: "구찌 사물 AI 아트", why: "구찌 로고와 스타일로 일상의 다양한 사물들을 재해석하여 브랜드 아이덴티티 주입.", apply: "일상 용품을 브랜드 패턴으로 뒤덮는 게릴라 마케팅 이미지.", link: "https://www.instagram.com/p/DTLRsI8iDVP/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==", new: true },
-            { tag: "marketing", label: "💰 수익화", color: "green", name: "Beauty Tech", sub: "자동 헤어 스타일링 기계", why: "기계가 자동으로 머리카락 스타일을 만들어주는 미래지향적 컨셉 영상.", apply: "미래의 뷰티 살롱이나 자동화된 서비스를 상상하여 시각화.", link: "https://www.instagram.com/reel/DSk5L7Mk_bO/?utm_source=ig_web_copy_link&igsh=NTc4MTIwNjQ2YQ==", new: true },
+            // --- NEW ADDITIONS (24개) ---
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Ssestar", sub: "대만 관광지 롤러코스터", why: "타이베이 101 등 명소를 롤러코스터 시점으로 여행하는 역동적 연출.", apply: "지역 명소를 놀이기구 타듯이 보여주는 관광 홍보.", link: "https://www.instagram.com/reel/DTe8U-PkfOI/?igsh=MTc1cm5hZThscHZydQ==", new: true },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "If Only", sub: "미래형 출퇴근 교통수단", why: "파리 시장이 상상한 기발한 미래 교통수단들을 유쾌하게 시각화.", apply: "미래 도시 컨셉의 이동 수단이나 배송 아이디어 시각화.", link: "https://www.instagram.com/reel/DTs6xwQDAW-/?igsh=MXVteXllZXd5NmFh", new: true },
+            { tag: "marketing", label: "💰 수익화", color: "green", name: "UK Snack Attack", sub: "프링글스 펄 (가상제품)", why: "실존하지 않는 'Pearl Pringles'를 리얼하게 표현하여 호기심 자극.", apply: "만우절 이벤트나 가상 콜라보 제품으로 바이럴 유도.", link: "https://www.instagram.com/reel/DTyCMnNjEXJ/?igsh=a2FxdXE2NXB4ZThw", new: true },
+            { tag: "quality", label: "🎨 퀄리티", color: "blue", name: "Orange Design", sub: "자기관리 비주얼 스토리텔링", why: "시간관리 매트릭스 정보를 세련된 비주얼 스토리텔링으로 표현.", apply: "딱딱한 정보성 콘텐츠를 감각적인 모션 그래픽으로 변환.", link: "https://www.instagram.com/reel/DS6IJYYj-yv/?igsh=MWhuNXZucmk5NjVtaA==", new: true },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Azwar Anas", sub: "몽환적 드레스 영상", why: "초현실적인 드레스를 입은 여성이 음악에 맞춰 춤추는 예술적 영상.", apply: "패션 아이템이 음악 비트에 반응하여 몽환적으로 변하는 숏폼.", link: "https://www.instagram.com/reel/DSfHxpUkp5z/?igsh=MW92Y3c3cWdkcTRjdA==", new: true },
+            { tag: "marketing", label: "💰 수익화", color: "green", name: "SOME BY MI", sub: "여드름 치료제 다이빙", why: "수영장을 화장품으로 채우고 다이빙하는 과장된 연출로 효능 강조.", apply: "제품 제형 속에 풍덩 빠지는 듯한 몰입형 광고 영상.", link: "https://www.instagram.com/reel/DTzqJ4TDaJd/?igsh=MWd6OXVneGcyYm52Zw==", new: true },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Danish Khan", sub: "하늘 나는 집 추락", why: "집이 통째로 날아가다 헬기와 충돌하는 코믹한 재난 상황.", apply: "부동산이나 이사 서비스를 코믹한 상황극으로 표현.", link: "https://www.instagram.com/reel/DT0Q5YsicVB/?igsh=MWswdjdyN2duODZvaw==", new: true },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Ze Oh", sub: "거대화 주사 변신", why: "주사를 맞자마자 거인으로 변하는 직관적인 비포/애프터.", apply: "제품 사용 후 캐릭터나 사물이 거대해지거나 강력해지는 연출.", link: "https://www.instagram.com/reel/DT7BNmDEj9r/?igsh=dHc3aGoxMWJrdzAw", new: true },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Joann (Inflatable)", sub: "모든 사물이 풍선으로", why: "일상의 사물을 풍선 재질로 바꿔 귀여움과 이질감 동시 제공.", apply: "딱딱한 제품을 말랑한 풍선 질감으로 렌더링하여 친근함 유도.", link: "https://www.instagram.com/p/DTsnEVrjX4g/?img_index=3&igsh=a2hsOXU5NjBjZnJu", new: true },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Joann (Edible)", sub: "먹는 꽃 푸드 아트", why: "화려한 꽃을 식재료처럼 발라먹는 감각적인 푸드 아트.", apply: "화장품 원료나 향기를 미각적으로 표현하는 공감각적 영상.", link: "https://www.instagram.com/p/DUDzDfxjeBb/?img_index=1&igsh=N3B6dTY2enEwbjls", new: true },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Joann (Egg)", sub: "달걀 패션 아이템", why: "달걀 껍질과 노른자로 만든 럭셔리 의상과 신발.", apply: "음식 재료나 이색 소재로 만든 의상 시리즈.", link: "https://www.instagram.com/p/DSpqjbmjXNI/?img_index=5&igsh=ZXJzZXJvdnYwYzlo", new: true },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Designideahub", sub: "BMW 부품 구두", why: "자동차 부품으로 제작된 하이힐을 신고 있는 오토모티브 팩션.", apply: "기계 부품이나 하드웨어를 패션 잡화로 디자인하는 컨셉.", link: "https://www.instagram.com/p/DTf-uIBDAdN/?igsh=NWI3aXk4eTJzM3U0", new: true },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Neng Jihan", sub: "골목 파괴 버스", why: "대형 버스가 좁은 골목을 파괴하며 나아가는 물리 기반 코믹 영상.", apply: "제품의 내구성이나 강력함을 장애물 파괴 영상으로 표현.", link: "https://www.instagram.com/reel/DTJzB4kCZlW/?igsh=MXZvajdxNjZleTlpYQ==", new: true },
+            { tag: "quality", label: "🎨 퀄리티", color: "blue", name: "Joann (Insect)", sub: "극강 비주얼 곤충", why: "봄의 곤충들을 보석같이 화려하고 극적으로 시각화.", apply: "작은 생물이나 미시적인 세계를 매크로 렌즈 감성으로 연출.", link: "https://www.instagram.com/p/DTvLhCljRNk/?img_index=2&igsh=aTU4MTc5bnRvOTQz", new: true },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Glass Souls", sub: "투명 인체 내부 비주얼", why: "투명한 유리 몸 안에 꽃과 물고기가 담긴 초현실적 예술.", apply: "이너 뷰티나 멘탈 헬스 케어를 시각적으로 아름답게 표현.", link: "https://www.instagram.com/p/DUD4jBqjOCt/?img_index=7&igsh=MTF0OWU5bWxlMnZ6aQ==", new: true },
+            { tag: "character", label: "🧬 캐릭터", color: "purple", name: "Gregory Masouras", sub: "샤넬 입은 앨리스", why: "이상한 나라의 앨리스 캐릭터를 샤넬 모델로 재해석.", apply: "유명 캐릭터나 고전 인물에게 자사 브랜드 옷 입히기.", link: "https://www.instagram.com/p/DUBIjHdjBIS/?igsh=MXZvejY3OTV3MHlpag==", new: true },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Benz Alarm", sub: "벤츠 모양 알람시계", why: "벤츠 자동차 모양의 알람시계가 작동하는 라이프스타일 영상.", apply: "브랜드의 시그니처 디자인을 생활 가전 제품에 적용.", link: "https://www.instagram.com/reel/DTZ_mHwk92B/?igsh=aWN3amQ1bjZvY3Vx", new: true },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "LuxArts", sub: "걷는 말 모양 소파", why: "목마 모양의 가구가 실제로 동물처럼 걸어 다니는 영상.", apply: "가구가 스스로 배치되거나 움직이는 마법 같은 인테리어 영상.", link: "https://www.instagram.com/reel/DTF-cUbj3Dv/?igsh=YzBzeXpjdjJ5dG13", new: true },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Mohammad Apu", sub: "미래형 몸매 변신 부스", why: "미래형 부스에서 순식간에 이상적인 몸매로 변신.", apply: "다이어트나 헬스 케어 제품의 드라마틱한 미래상 제시.", link: "https://www.instagram.com/reel/DSQHhdrkxsW/?igsh=Zmp2YTY5eHd4Y201", new: true },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Master AI", sub: "캡슐 요리 냄비", why: "캡슐을 넣으면 요리가 완성되는 미래 주방 가전 마법.", apply: "밀키트나 간편식을 마법처럼 뚝딱 만들어내는 연출.", link: "https://www.instagram.com/reel/DT1prF2iJNU/?igsh=ajhlejNtZTA2cXl2", new: true },
+            { tag: "marketing", label: "💰 수익화", color: "green", name: "Lacoste x Bialetti", sub: "라코스테 커피 콜라보", why: "테니스(라코스테)와 커피(비알레띠)의 가상 만남을 애니메이션화.", apply: "이종 산업 간의 가상 콜라보레이션 티저 영상.", link: "https://www.instagram.com/p/DT7zMVfjEtb/?img_index=4&igsh=MWxiYXZsaWZrZnRvbQ==", new: true },
+            { tag: "quality", label: "🎨 퀄리티", color: "blue", name: "Aiartist", sub: "명화 극강 비주얼", why: "인상주의 화풍을 AI로 극도로 정교하게 재현한 영상.", apply: "브랜드 스토리를 고전 명화 스타일로 우아하게 풀어내기.", link: "https://www.instagram.com/reel/DT9Nu0pEnz2/?igsh=MXBhOWhnMDVvMmpqMA==", new: true },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "coolwar.io", sub: "절벽 에어바운서", why: "절벽 위 거대 에어슬라이드를 타고 낙하하는 스릴 영상.", apply: "익스트림 스포츠나 아웃도어 제품의 역동성 강조.", link: "https://www.instagram.com/reel/DT7_XCQE-1H/?igsh=aG14ZTk4dHBhMWQ2", new: true },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Pickaboo", sub: "다양한 테마 욕실", why: "기차, 우주 등 다양한 배경의 욕실을 보여주며 선택 유도.", apply: "인테리어 취향 테스트나 공간 커스터마이징 서비스 홍보.", link: "https://www.instagram.com/reel/DUBAlKLESMx/?igsh=cmZtemFqeHB4aWZk", new: true },
 
-            // --- PREVIOUS ITEMS (이전 항목들) ---
+            // --- PREVIOUS ITEMS (기존 68개) ---
+            { tag: "quality", label: "🎨 퀄리티", color: "blue", name: "Hyperzoom Face", sub: "여자 얼굴 하이퍼줌", why: "여성 얼굴을 극도로 확대하여 미세한 디테일까지 드러내는 AI 초고화질 포토그래피.", apply: "뷰티 제품의 텍스처나 피부 결을 강조하는 초근접 광고 영상.", link: "https://www.instagram.com/reel/DSSa5qmDyOL/?igsh=MTZjNnY0d204bTkzbQ==" },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Impossible Pose", sub: "불가능한 포즈 모델", why: "현실적으로 불가능한 신체 포즈를 취한 여성 모델로 시각적 기이함과 예술성 강조.", apply: "패션 화보나 브랜드 룩북에서 시선을 끄는 아방가르드한 포즈 연출.", link: "https://www.instagram.com/p/DT77sBCDFmm/?utm_source=ig_web_copy_link&igsh=NTc4MTIwNjQ2YQ==" },
+            { tag: "quality", label: "🎨 퀄리티", color: "blue", name: "Skyfall Beauty", sub: "스카이폴 & 아이템 클로즈업", why: "하늘에서 떨어지다 공중에서 멈춰 화장품이 흩어지는 역동적이고 몽환적인 연출.", apply: "제품 패키지가 공중에서 분해되거나 흩날리는 임팩트 있는 인트로.", link: "https://www.instagram.com/reel/DT2mUkmDRZd/?utm_source=ig_web_copy_link&igsh=NTc4MTIwNjQ2YQ==" },
+            { tag: "character", label: "🧬 캐릭터", color: "purple", name: "Plastic Couture", sub: "플라스틱 질감 피팅", why: "1960년대 패션 인형 스타일로 렌더링된 플라스틱 질감 모델의 독특한 무드.", apply: "레트로 컨셉의 의류나 액세서리를 인형 컨셉으로 룩북 제작.", link: "https://www.instagram.com/p/DTPF37okrry/?utm_source=ig_web_copy_link&igsh=NTc4MTIwNjQ2YQ==" },
+            { tag: "marketing", label: "💰 수익화", color: "green", name: "Art Style Ad", sub: "명화 스타일 샤넬 광고", why: "유명 화가(인상파, 입체파)의 그림체로 명품 패션을 재현하여 고급스러움 강조.", apply: "브랜드 헤리티지를 예술 작품과 결합한 아트 마케팅 영상.", link: "https://www.instagram.com/reel/DT8fntKCBdn/?utm_source=ig_web_copy_link&igsh=NTc4MTIwNjQ2YQ==" },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Valentin Loiseau", sub: "크루즈 화물칸 인형 낙하", why: "크루즈 화물칸에서 인형들이 끝없이 떨어지는 초현실적이고 기이한 루프 영상.", apply: "대량의 제품이 쏟아지거나 쌓이는 물량 공세형 숏폼.", link: "https://www.instagram.com/reel/DT93Z6kDYCG/?utm_source=ig_web_copy_link&igsh=NTc4MTIwNjQ2YQ==" },
+            { tag: "surreal", label: "🤯 초현실", color: "pink", name: "Gucci Objects", sub: "구찌 사물 AI 아트", why: "구찌 로고와 스타일로 일상의 다양한 사물들을 재해석하여 브랜드 아이덴티티 주입.", apply: "일상 용품을 브랜드 패턴으로 뒤덮는 게릴라 마케팅 이미지.", link: "https://www.instagram.com/p/DTLRsI8iDVP/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==" },
+            { tag: "marketing", label: "💰 수익화", color: "green", name: "Beauty Tech", sub: "자동 헤어 스타일링 기계", why: "기계가 자동으로 머리카락 스타일을 만들어주는 미래지향적 컨셉 영상.", apply: "미래의 뷰티 살롱이나 자동화된 서비스를 상상하여 시각화.", link: "https://www.instagram.com/reel/DSk5L7Mk_bO/?utm_source=ig_web_copy_link&igsh=NTc4MTIwNjQ2YQ==" },
             { tag: "editing", label: "🎬 편집", color: "orange", name: "ASMR AI", sub: "변기 디자인 모핑 ASMR", why: "여러 디자인의 변기가 연속으로 모핑되며 등장하는 ASMR 스타일.", apply: "다양한 제품 디자인 옵션을 모핑 기법으로 빠르게 보여주는 숏폼.", link: "https://www.instagram.com/reel/DTjRgwGjaPp/?igsh=MW9qandoOW5ic3Bjeg==" },
             { tag: "editing", label: "🎬 편집", color: "orange", name: "Fashion Morph", sub: "패션 잡화 무한 모핑", why: "가방·구두 등 패션 잡화가 부드럽게 서로 모핑되며 시각적 즐거움 제공.", apply: "시즌별 패션 아이템 라인업을 하나의 흐름으로 연결하는 모핑 영상.", link: "https://www.instagram.com/reel/DSNJNcPgjGK/?igsh=Y2RwYnk2aDhqeWd1" },
             { tag: "marketing", label: "💰 수익화", color: "green", name: "Health Ad", sub: "실시간 성장 건기식 광고", why: "손톱과 머리카락이 빠르게 자라나는 과장된 효과로 효능 시각화.", apply: "영양제나 화장품의 효능을 직관적이고 빠른 타임랩스로 표현.", link: "https://www.instagram.com/reel/DSwzPfJgX93/?igsh=ZmxrbGlycnd0eDB1" },
@@ -207,7 +360,7 @@
             { tag: "quality", label: "🎨 퀄리티", color: "blue", name: "Brad Ziemer", sub: "건물 건축 노가다 긴 영상", why: "건물이 스스로 지어지는 과정을 매끄러운 타임랩스(In-painting)로 보여주어 시각적 쾌감 제공.", apply: "복잡한 기계나 실험 장비가 조립되는 과정을 타임랩스 형식으로 연출.", link: "https://www.instagram.com/reel/DS7o0EIDTqa/" },
             { tag: "quality", label: "🎨 퀄리티", color: "blue", name: "Rourke Sefton-Minns", sub: "광고용 프롬프트 & 스토리보드", why: "LTX Studio를 활용한 정교한 사전 기획(스토리보드)으로 AI 광고의 퀄리티와 개연성 확보.", apply: "긴 호흡의 영상 제작 시 사전 컷별 기획(프리프로덕션) 도입.", link: "https://www.instagram.com/reel/DTN_mt0E_Xx/" },
             { tag: "quality", label: "🎨 퀄리티", color: "blue", name: "비주얼프리즘", sub: "Nano Banana 라이팅", why: "'Soft Light', 'Kicker Light' 등 전문 조명 용어를 사용하여 실사 같은 분위기 연출.", apply: "썸네일이나 인트로 제작 시 조명 프롬프트를 적극 활용하여 때깔 높이기.", link: "https://www.instagram.com/p/DSEnYqRibgq/" },
-            { tag: "quality", label: "🎨 퀄리티", color: "blue", name: "Social Cameo", sub: "도심 하늘 헬리콥터 뷰 (여행 AI 아트)", why: "헬리콥터에 매달린 듯한 하이앵글로 압도적인 스케일감 부여.", apply: "거시 경제나 지구과학 설명 시 전지적 시점의 앵글 활용.", link: "https://www.instagram.com/p/DTP6IfXDycO/" },
+            { tag: "quality", label: "🎨 퀄리티", color: "blue", name: "Social Cameo", sub: "도심 하늘 헬리콥터 뷰", why: "헬리콥터에 매달린 듯한 하이앵글로 압도적인 스케일감 부여.", apply: "거시 경제나 지구과학 설명 시 전지적 시점의 앵글 활용.", link: "https://www.instagram.com/p/DTP6IfXDycO/" },
             { tag: "quality", label: "🎨 퀄리티", color: "blue", name: "AI Fav Mag", sub: "AI 툴 6가지 추천", why: "목적에 맞는 AI 툴(Nano Banana, Kling 등)의 워크플로우를 명확히 정리.", apply: "제작 파이프라인을 단계별로 매뉴얼화하여 효율성 증대.", link: "https://www.instagram.com/p/DS7ifoakqLg/" },
             { tag: "quality", label: "🎨 퀄리티", color: "blue", name: "비주얼프리즘 (2)", sub: "Nano Banana 커뮤니티", why: "프롬프트 공유 사이트 및 깃허브 등 실무 리소스 큐레이션.", apply: "팀 내 프롬프트 라이브러리 구축 및 공유.", link: "https://www.instagram.com/p/DTNCK0KCUx2/" },
             { tag: "surreal", label: "🤯 초현실", color: "pink", name: "김대범", sub: "라면 캡슐", why: "'만약에?'라는 상상력을 극도로 리얼하게 구현하여 끝까지 보게 함.", apply: "'알약 하나로 배부르다면?' 같은 과학적 상상을 시각화.", link: "https://www.instagram.com/reel/DRsvAHgidv8/" },
@@ -239,182 +392,229 @@
             { tag: "niche", label: "🎯 니치", color: "teal", name: "fasmria", sub: "삽겹살 계단 ASMR", why: "힐링/멍 때리기 좋은 비주얼 ASMR.", apply: "복잡한 설명 후 쉬어가는 타임 영상.", link: "https://www.instagram.com/reel/DSaSJxdjl3H/" }
         ];
 
-        // 렌더링 함수
-        function renderCards(filter = 'all') {
+        // -----------------------------------------------------------
+        // 초기화 & 렌더링
+        // -----------------------------------------------------------
+        
+        // 날짜 & 카운트 업데이트
+        document.getElementById('header-date').innerText = LAST_UPDATE_DATE;
+        document.getElementById('header-total').innerText = db.length;
+        document.getElementById('header-new').innerText = db.filter(i => i.new).length;
+
+        // 리스트 렌더링
+        function renderList(filter = 'all', searchQuery = '') {
             const grid = document.getElementById('card-grid');
             grid.innerHTML = '';
             
-            // 새 콘텐츠 개수 카운트
-            let newCount = 0;
+            let filteredDb = db;
 
-            db.forEach((item, index) => {
-                if (filter !== 'all' && item.tag !== filter) return;
-                if (item.new) newCount++;
+            if (filter !== 'all') {
+                filteredDb = filteredDb.filter(item => item.tag === filter);
+            }
 
-                const isSearch = item.link.includes('google.com'); 
-                const btnText = isSearch ? '🔍 채널 검색' : 'Instagram 보기';
-                const btnIcon = isSearch ? '<i class="fa-brands fa-google mr-1"></i>' : '<i class="fa-brands fa-instagram mr-1"></i>';
-                const btnClass = isSearch ? 'bg-slate-700 hover:bg-slate-600 text-slate-300' : 'bg-pink-600 hover:bg-pink-500 text-white';
+            if (searchQuery) {
+                const lower = searchQuery.toLowerCase();
+                filteredDb = filteredDb.filter(item => 
+                    item.name.toLowerCase().includes(lower) || 
+                    item.sub.toLowerCase().includes(lower) || 
+                    item.why.toLowerCase().includes(lower)
+                );
+            }
 
-                const newBadge = item.new ? `<span class="absolute top-4 right-4 bg-red-500/20 text-red-400 text-[10px] font-bold px-2 py-1 rounded border border-red-500/30 animate-pulse">NEW ✨</span>` : '';
+            const noResult = document.getElementById('no-results');
+            if (filteredDb.length === 0) {
+                noResult.classList.remove('hidden');
+                noResult.classList.add('flex');
+            } else {
+                noResult.classList.add('hidden');
+                noResult.classList.remove('flex');
+            }
 
-                const cardHTML = `
-                <div class="card ${item.tag} bg-slate-800 rounded-xl overflow-hidden border border-slate-700 card-hover flex flex-col h-full fade-in relative">
+            filteredDb.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = "bg-slate-800/60 backdrop-blur-sm rounded-xl p-5 border border-slate-700/50 card-container cursor-pointer flex flex-col h-full card-enter group";
+                card.style.animationDelay = `${index * 0.03}s`;
+                
+                // 클릭 시 모달 오픈
+                card.onclick = () => openDetailModal(item);
+
+                // 카테고리별 포인트 컬러
+                const colorMap = {
+                    'pink': 'text-pink-400 border-pink-500/20 bg-pink-500/10',
+                    'blue': 'text-cyan-400 border-cyan-500/20 bg-cyan-500/10',
+                    'green': 'text-emerald-400 border-emerald-500/20 bg-emerald-500/10',
+                    'purple': 'text-purple-400 border-purple-500/20 bg-purple-500/10',
+                    'orange': 'text-orange-400 border-orange-500/20 bg-orange-500/10',
+                    'teal': 'text-teal-400 border-teal-500/20 bg-teal-500/10',
+                };
+                const badgeStyle = colorMap[item.color] || 'text-slate-400 border-slate-500/20 bg-slate-500/10';
+                
+                const newBadge = item.new ? `<span class="absolute top-4 right-4 bg-trend-pink text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-[0_0_10px_rgba(244,114,182,0.5)] new-badge-pulse">NEW</span>` : '';
+
+                card.innerHTML = `
                     ${newBadge}
-                    <div class="p-6 flex-grow">
-                        <div class="flex justify-between items-start mb-4 pr-12">
-                            <span class="px-2 py-1 bg-${item.color}-500/10 text-${item.color}-400 rounded-md text-xs font-bold uppercase border border-${item.color}-500/20">${item.label}</span>
-                            ${item.link.includes('instagram.com') ? '<i class="fa-brands fa-instagram text-pink-500 text-xl"></i>' : '<i class="fa-solid fa-magnifying-glass text-slate-500 text-xl"></i>'}
-                        </div>
-                        <h3 class="text-xl font-bold text-white mb-1 truncate">${item.name}</h3>
-                        <p class="text-slate-400 text-xs mb-4 line-clamp-2 h-8">${item.sub}</p>
-                        <div class="space-y-4">
-                            <div class="bg-slate-900/50 p-3 rounded-lg border border-slate-700/50">
-                                <div class="text-yellow-500 text-xs font-bold mb-1"><i class="fa-regular fa-lightbulb"></i> Why it works</div>
-                                <p class="text-sm text-slate-300 line-clamp-3" id="analysis-${index}">${item.why}</p>
-                            </div>
-                            <div class="bg-emerald-900/20 p-3 rounded-lg border border-emerald-500/20">
-                                <div class="text-emerald-400 text-xs font-bold mb-1"><i class="fa-solid fa-rocket"></i> Apply</div>
-                                <p class="text-sm text-emerald-100/80 line-clamp-3" id="action-${index}">${item.apply}</p>
-                            </div>
-                        </div>
+                    <div class="mb-4">
+                        <span class="inline-block px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider border ${badgeStyle}">${item.label}</span>
                     </div>
-                    <div class="p-4 border-t border-slate-700 bg-slate-800/50 flex flex-col gap-2">
-                        <button onclick="openAiModal('${item.name}', 'analysis-${index}', 'action-${index}')" class="w-full py-2 rounded-lg bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white text-sm font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-indigo-500/20">
-                            <i class="fa-solid fa-wand-magic-sparkles"></i> ✨ AI 아이디어 확장
-                        </button>
-                        <a href="${item.link}" target="_blank" class="w-full block text-center py-2 rounded-lg ${btnClass} text-sm font-medium transition-colors">
-                            ${btnIcon} ${btnText}
-                        </a>
+                    
+                    <h3 class="text-lg font-bold text-white leading-snug mb-2 group-hover:text-trend-teal transition-colors duration-300">${item.name}</h3>
+                    <p class="text-sm text-slate-400 line-clamp-2 mb-4 h-10">${item.sub}</p>
+                    
+                    <div class="mt-auto pt-4 border-t border-slate-700/30 flex items-center justify-between text-xs text-slate-500">
+                        <span class="font-medium uppercase tracking-wide">Analysis</span>
+                        <i class="fa-solid fa-arrow-right -rotate-45 group-hover:rotate-0 group-hover:text-trend-teal transition-all duration-300"></i>
                     </div>
-                </div>`;
-                grid.innerHTML += cardHTML;
-            });
-            
-            document.getElementById('total-count').innerText = db.length;
-            
-            const totalNewCount = db.filter(item => item.new).length;
-            document.getElementById('new-count-display').innerText = `${totalNewCount}개`;
-            
-            document.getElementById('update-date').innerText = LAST_UPDATE_DATE;
-        }
-
-        renderCards();
-        
-        window.addEventListener('load', () => {
-            const savedKey = localStorage.getItem('gemini_api_key');
-            updateApiUi(savedKey);
-        });
-
-        function updateApiUi(localKey) {
-            const container = document.getElementById('api-key-section');
-            if (HOST_API_KEY && HOST_API_KEY.length > 10) {
-                container.innerHTML = `
-                    <div class="flex items-center justify-between text-indigo-300">
-                        <div class="flex items-center gap-2">
-                            <i class="fa-solid fa-server text-indigo-400"></i>
-                            <span class="text-sm font-bold">Host Key Active</span>
-                        </div>
-                        <span class="text-xs bg-indigo-500/20 px-2 py-1 rounded text-indigo-300">Free Mode</span>
-                    </div>
-                    <p class="text-xs text-slate-500 mt-1">호스트가 제공하는 API Key로 무료로 이용할 수 있습니다.</p>
                 `;
-                return;
-            }
-            const inputValue = localKey || "";
-            container.innerHTML = `
-                <label class="block text-xs font-bold text-indigo-400 mb-2 uppercase tracking-wider flex justify-between">
-                    <span>Google Gemini API Key (Test Mode)</span>
-                    <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-slate-500 hover:text-indigo-300 underline cursor-pointer">키 발급받기 ↗</a>
-                </label>
-                <input type="password" id="api-key-input" value="${inputValue}" placeholder="API Key 입력 (자동 저장됨)" class="w-full bg-slate-900 border border-slate-700 rounded-md py-2 px-3 text-white text-sm focus:outline-none focus:border-indigo-500 transition-colors">
-                <p class="text-[10px] text-slate-600 mt-2">
-                    <i class="fa-solid fa-circle-info mr-1"></i>
-                    <strong>호스팅 팁:</strong> 다른 사람과 공유하려면 코드 맨 윗줄 <code>HOST_API_KEY</code> 변수에 키를 입력하고 배포하세요.
-                </p>
-            `;
-            const input = document.getElementById('api-key-input');
-            if(input) {
-                input.addEventListener('input', (e) => {
-                    localStorage.setItem('gemini_api_key', e.target.value.trim());
-                });
-            }
+                grid.appendChild(card);
+            });
         }
 
-        function filterCards(category) {
-            const buttons = document.querySelectorAll('.filter-btn');
-            buttons.forEach(btn => {
-                if(btn.dataset.filter === category) {
-                    btn.className = "filter-btn active px-4 py-2 rounded-full text-xs font-semibold bg-white text-slate-900 ring-2 ring-white transition-all";
+        // 필터링 버튼 로직
+        function filterList(filter) {
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if (btn.dataset.filter === filter) {
+                    btn.className = "filter-btn active px-5 py-2 rounded-full text-xs font-bold bg-white text-slate-900 shadow-[0_0_15px_rgba(255,255,255,0.3)] scale-105";
                 } else {
-                    btn.className = "filter-btn px-4 py-2 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 transition-all";
+                    btn.className = "filter-btn px-5 py-2 rounded-full text-xs font-bold bg-slate-800 text-slate-400 border border-slate-700 hover:text-white hover:bg-slate-700 hover:border-slate-500";
                 }
             });
-            renderCards(category);
+            renderList(filter, document.getElementById('search-input').value);
         }
 
-        let currentContext = {};
-
-        function openAiModal(title, analysisId, actionId) {
-            currentContext = { 
-                title, 
-                analysis: document.getElementById(analysisId).innerText, 
-                action: document.getElementById(actionId).innerText 
-            };
-            
-            document.getElementById('modal-context-title').innerText = title;
-            document.getElementById('modal-context-text').innerText = `"${currentContext.analysis}"`;
-            document.getElementById('modal-action-text').innerText = `👉 ${currentContext.action}`;
-            
-            document.getElementById('user-prompt-input').value = '';
-            document.getElementById('ai-response-area').classList.add('hidden');
-            document.getElementById('ai-modal').classList.remove('hidden');
-            document.getElementById('user-prompt-input').focus();
-        }
-
-        function closeAiModal() {
-            document.getElementById('ai-modal').classList.add('hidden');
-        }
-
-        document.getElementById('ai-modal').addEventListener('click', function(e) {
-            if (e.target === this) closeAiModal();
+        // 검색 이벤트
+        document.getElementById('search-input').addEventListener('input', (e) => {
+            const activeFilter = document.querySelector('.filter-btn.active').dataset.filter;
+            renderList(activeFilter, e.target.value);
         });
 
+        // 초기 렌더링
+        renderList();
+
+
+        // -----------------------------------------------------------
+        // 모달 & AI 로직
+        // -----------------------------------------------------------
+        let currentItem = {};
+
+        function openDetailModal(item) {
+            currentItem = item;
+            
+            // 모달 데이터 채우기
+            document.getElementById('modal-tag').innerText = item.label;
+            // 태그 컬러 적용
+            const colorMap = {
+                'pink': 'text-pink-400 border-pink-500/20 bg-pink-500/10',
+                'blue': 'text-cyan-400 border-cyan-500/20 bg-cyan-500/10',
+                'green': 'text-emerald-400 border-emerald-500/20 bg-emerald-500/10',
+                'purple': 'text-purple-400 border-purple-500/20 bg-purple-500/10',
+                'orange': 'text-orange-400 border-orange-500/20 bg-orange-500/10',
+                'teal': 'text-teal-400 border-teal-500/20 bg-teal-500/10',
+            };
+            document.getElementById('modal-tag').className = `px-3 py-1 rounded-md text-[10px] font-black uppercase tracking-widest border ${colorMap[item.color]}`;
+
+            document.getElementById('modal-title').innerText = item.name;
+            document.getElementById('modal-sub').innerText = item.sub;
+            document.getElementById('modal-why').innerText = item.why;
+            document.getElementById('modal-apply').innerText = item.apply;
+            document.getElementById('modal-link-btn').href = item.link;
+            
+            // ID 표시 (임시)
+            document.getElementById('ref-id').innerText = `#${Math.floor(Math.random()*1000).toString().padStart(3, '0')}`;
+
+            // NEW 배지 처리
+            const badge = document.getElementById('modal-new-badge');
+            if (item.new) badge.classList.remove('hidden');
+            else badge.classList.add('hidden');
+
+            // AI 입력창 초기화
+            document.getElementById('ai-result').classList.add('hidden');
+            document.getElementById('ai-result').innerHTML = '';
+            document.getElementById('ai-prompt-input').value = '';
+
+            // 모달 표시
+            const modal = document.getElementById('detail-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeDetailModal() {
+            const modal = document.getElementById('detail-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // 모달 배경 클릭 시 닫기
+        document.getElementById('detail-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'detail-modal') closeDetailModal();
+        });
+
+        // API Key 토글
+        function toggleApiKeyInput() {
+            const container = document.getElementById('api-key-container');
+            container.classList.toggle('hidden');
+        }
+
+        // Key 자동 저장/로드
+        const apiKeyInput = document.getElementById('api-key-input');
+        if (HOST_API_KEY) {
+            apiKeyInput.placeholder = "호스트 키가 적용되어 있습니다 (입력 불필요)";
+            apiKeyInput.disabled = true;
+        } else {
+            const savedKey = localStorage.getItem('gemini_api_key');
+            if (savedKey) apiKeyInput.value = savedKey;
+            
+            apiKeyInput.addEventListener('input', (e) => {
+                localStorage.setItem('gemini_api_key', e.target.value.trim());
+            });
+        }
+
+        // AI 아이디어 생성
         async function generateIdea() {
+            const userPrompt = document.getElementById('ai-prompt-input').value;
             let apiKey = HOST_API_KEY;
-            if (!apiKey || apiKey.length < 10) {
-                const inputEl = document.getElementById('api-key-input');
-                apiKey = inputEl ? inputEl.value.trim() : localStorage.getItem('gemini_api_key');
+            
+            if (!apiKey) {
+                apiKey = apiKeyInput.value.trim();
             }
-            
-            const userQuery = document.getElementById('user-prompt-input').value;
-            
-            if (!apiKey) return alert("API Key가 필요합니다. 상단 입력창을 확인하거나 호스트 키를 설정해주세요.");
-            if (!userQuery) return alert("주제를 입력해주세요!");
 
-            const btnText = document.getElementById('btn-text');
-            const btnLoader = document.getElementById('btn-loader');
-            const outputArea = document.getElementById('ai-response-area');
-            const markdownOutput = document.getElementById('markdown-output');
+            if (!apiKey) return alert("API Key가 필요합니다. 상단의 'API Key Settings'를 눌러 입력해주세요.");
+            if (!userPrompt) return alert("주제를 입력해주세요!");
 
-            btnText.textContent = "생성 중...";
-            btnLoader.classList.remove('hidden');
-            outputArea.classList.add('hidden');
+            const btn = event.currentTarget; // 생성 버튼
+            const loader = document.getElementById('ai-loader');
+            const resultArea = document.getElementById('ai-result');
+
+            // 로딩 시작
+            btn.disabled = true;
+            btn.querySelector('span').innerText = "";
+            loader.classList.remove('hidden');
+            resultArea.classList.add('hidden');
 
             const systemPrompt = `
-                당신은 크리에이티브 영상 PD 보조 AI입니다.
+                당신은 크리에이티브 디렉터 AI입니다.
                 
-                [레퍼런스] ${currentContext.title}
-                - 분석: ${currentContext.analysis}
-                - 적용점: ${currentContext.action}
+                [레퍼런스 분석]
+                - 제목: ${currentItem.name} (${currentItem.sub})
+                - 성공요인: ${currentItem.why}
+                - 적용포인트: ${currentItem.apply}
 
-                [사용자 주제] ${userQuery}
+                [사용자 요청 주제]
+                "${userPrompt}"
 
-                위 레퍼런스 기법을 사용하여 주제에 맞는 영상 기획을 제안하세요.
-                1. 💡 기획 컨셉 (한 줄)
-                2. 🎬 연출/촬영 가이드
-                3. 📝 오프닝 멘트
-                4. 🎨 AI 이미지 프롬프트 추천 (반드시 'Nano Banana Pro' 또는 'Midjourney v7' 기준의 고퀄리티 영문 프롬프트로 작성. 조명, 앵글, 텍스처 등 상세 키워드 포함)
+                위 레퍼런스의 성공 요인과 스타일을 사용자의 주제에 창의적으로 적용하여 기획안을 작성해주세요.
+                
+                [출력 형식 (Markdown)]
+                **1. 💡 기획 컨셉 (한 줄)**
+                (내용)
+
+                **2. 🎬 연출 및 촬영 가이드**
+                (내용)
+
+                **3. 📝 오프닝 멘트/카피**
+                (내용)
+
+                **4. 🎨 AI 이미지 프롬프트 (Midjourney v6 / Nano Banana Pro 최적화)**
+                (영문 프롬프트 작성)
             `;
 
             try {
@@ -422,39 +622,33 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: userQuery }] }],
+                        contents: [{ parts: [{ text: "기획안 작성해줘" }] }], 
                         systemInstruction: { parts: [{ text: systemPrompt }] }
                     })
                 });
 
-                if (response.status === 429) {
-                    throw new Error("API 요청 횟수 초과! ⏳ 1분 정도 쉬었다가 다시 시도해주세요. (무료 버전 제한)");
-                }
-
                 const data = await response.json();
+                
+                if (data.error) throw new Error(data.error.message);
+                
+                const mdText = data.candidates[0].content.parts[0].text;
+                resultArea.innerHTML = marked.parse(mdText);
+                resultArea.classList.remove('hidden');
 
-                if (data.error) {
-                    throw new Error(data.error.message);
-                }
-                if (!data.candidates || data.candidates.length === 0) {
-                    throw new Error("AI 응답을 받아오지 못했습니다. (Safety Filter 등)");
-                }
-
-                markdownOutput.innerHTML = marked.parse(data.candidates[0].content.parts[0].text);
-                outputArea.classList.remove('hidden');
             } catch (error) {
-                console.error(error);
-                markdownOutput.innerHTML = `<p class="text-red-400 font-bold">⚠️ 오류 발생</p><p class="text-slate-400 text-xs mt-1">${error.message}</p>`;
-                outputArea.classList.remove('hidden');
+                alert(`오류 발생: ${error.message}`);
             } finally {
-                btnText.textContent = "생성";
-                btnLoader.classList.add('hidden');
+                btn.disabled = false;
+                btn.querySelector('span').innerText = "생성하기";
+                loader.classList.add('hidden');
             }
         }
 
-        document.getElementById('user-prompt-input').addEventListener('keypress', function(e) {
+        // 엔터키 입력 지원
+        document.getElementById('ai-prompt-input').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') generateIdea();
         });
+
     </script>
 </body>
 </html>
